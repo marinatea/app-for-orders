@@ -5,3 +5,5 @@ next
 client-development
 server-development
 .next
+next-env.d.ts
+data/products.json
