@@ -1,0 +1,7 @@
+package-lock.json
+.lh
+node_modules
+next
+client-development
+server-development
+.next
