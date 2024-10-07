@@ -1,4 +1,3 @@
-// W pliku ProductsPage.tsx
 import { useState } from "react";
 import styles from "../styles/productsPage.module.scss";
 import productsData from "../data/products.json";
@@ -42,7 +41,7 @@ const ProductsPage = ({ user }) => {
     await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user, cart, isFinalized: true }), // Dodajemy isFinalized: true
+      body: JSON.stringify({ user, cart, isFinalized: true }),
     });
 
     alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
@@ -50,20 +49,23 @@ const ProductsPage = ({ user }) => {
 
   return (
     <div className={styles.products}>
-      <h1>Produkty</h1>
-      <ul>
+      <h1 className={styles.products__header}>Produkty</h1>
+      <ul className={styles.products__list}>
         {productsData.map((product: Product) => (
-          <li key={product.id}>
-            {product.name}
+          <li key={product.id} className={styles.products__item}>
+            <span className={styles.products__item__name}>{product.name}</span>
             <input
               type="number"
               min="1"
               onChange={(e) => addToCart(product, Number(e.target.value))}
+              className={styles.products__item__input}
             />
           </li>
         ))}
       </ul>
-      <button onClick={handleCheckout}>Złóż zamówienie</button>
+      <button onClick={handleCheckout} className={styles.products__button}>
+        Złóż zamówienie
+      </button>
     </div>
   );
 };

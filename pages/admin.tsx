@@ -1,4 +1,3 @@
-// /pages/admin.tsx
 import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
 import productsData from "../data/products.json";
@@ -37,26 +36,25 @@ const AdminPage = () => {
 
   return (
     <div className={styles.admin}>
-      <h1>Panel Admina</h1>
-      <button onClick={deleteAllCarts} className={styles.deleteButton}>
+      <h1 className={styles.admin__header}>Panel Admina</h1>
+      <button onClick={deleteAllCarts} className={styles.admin__button}>
         Usuń wszystkie zamówienia
       </button>
       {carts.length === 0 ? (
-        <p>Brak zamówień do wyświetlenia.</p>
+        <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
       ) : (
         carts.map((cart, index) => (
-          <div key={index}>
-            <h2>Koszyk użytkownika: {cart.user}</h2>
+          <div key={index} className={styles.admin__cart}>
             <ul>
               {cart.cart.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} sztuk
                   <button>
                     <a
                       href={getOrderLink(item.id)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={styles.orderButton}
+                      className={styles.admin__cart__link}
                     >
                       Zamów produkt
                     </a>

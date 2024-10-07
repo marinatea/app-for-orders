@@ -1,4 +1,3 @@
-// /pages/api/cart.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
 let cartData: {

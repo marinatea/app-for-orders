@@ -4,8 +4,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { code } = req.body; // Odbieramy tylko kod
 
   // Lista unikalnych kodów dla użytkowników, w tym kod admina
-  const validCodes = ["abc123", "xyz789", "adminCode"]; // Dodaj kod administratora
-  const ADMIN_CODE = "adminCode"; // Zdefiniowany kod administratora
+  const validCodes = ["abc123", "xyz789", "admin"];
+  const ADMIN_CODE = "admin";
 
   // Weryfikacja kodu użytkownika lub kodu administratora
   if (code === ADMIN_CODE) {

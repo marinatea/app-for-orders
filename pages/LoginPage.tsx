@@ -1,51 +1,70 @@
-import { useState, useEffect } from "react"; // Importuj useEffect
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styles from "../styles/loginPage.module.scss";
 
 const LoginPage = () => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    // Resetuj stan błędu tylko po stronie klienta
     setError("");
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-    const response = await fetch("/api/authenticate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }), // Przesyłamy tylko kod
-    });
+    try {
+      const response = await fetch("/api/authenticate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      if (data.role === "admin") {
-        router.push("/admin"); // Przekierowanie do panelu admina
+      if (data.success) {
+        if (data.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push(`/products?user=${data.userId}`);
+        }
       } else {
-        router.push(`/products?user=${data.userId}`); // Przekierowanie dla użytkownika
+        setError(data.message || "Nieprawidłowy kod!");
       }
-    } else {
-      setError(data.message || "Nieprawidłowy kod!"); // Użyj komunikatu z API
+    } catch (err) {
+      setError("Wystąpił błąd podczas logowania. Spróbuj ponownie później.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className={styles.login}>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Wpisz kod"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-        />
-        <button type="submit">Zaloguj się</button>
-      </form>
-      {error && <p>{error}</p>} {/* Wyświetlenie błędu */}
+      <div className={styles.login__form}>
+        <h1 className={styles.login__title}>WINETU Login</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Wpisz kod"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className={styles.login__input}
+            required
+          />
+          <button 
+            type="submit" 
+            className={styles.login__button}
+            disabled={isLoading}
+          >
+            {isLoading ? "Logowanie..." : "Zaloguj się"}
+          </button>
+        </form>
+        {error && <p className={styles.login__error}>{error}</p>}
+      </div>
     </div>
   );
 };
