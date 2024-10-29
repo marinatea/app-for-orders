@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: appForOrders
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    nodeVersion: 20.x
