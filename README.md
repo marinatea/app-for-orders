@@ -1,4 +1,5 @@
 # appForOrders
 
-DEMO-front: https://appfororders-7.onrender.com
+DEMO-front RENDER: https://appfororders-7.onrender.com
 
+DEMO-front VERCEL: https://app-for-orders.vercel.app/
