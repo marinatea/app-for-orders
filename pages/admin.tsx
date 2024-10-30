@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
-import { client } from "../sanity/lib/client";
 
 interface Product {
   _id: string;

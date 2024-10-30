@@ -1,6 +1,7 @@
 .lh
 node_modules
-client-development
 server-development
 .next
+# Environment variables
+.env
 .env.local
