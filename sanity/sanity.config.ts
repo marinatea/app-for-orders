@@ -5,7 +5,7 @@ import { dataset, projectId } from "./env";
 
 export default defineConfig({
   projectId,
-  dataset,
+  dataset: "products",
   title: "appfororders",
   plugins: [deskTool()],
   schema,
