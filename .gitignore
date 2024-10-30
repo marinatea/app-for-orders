@@ -5,3 +5,5 @@ server-development
 # Environment variables
 .env
 .env.local
+.sanity/
+.sanity/runtime/index.html
