@@ -1,6 +1,7 @@
+// pages/LoginPage.tsx
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import styles from "../styles/loginPage.module.scss";
+import { useRouter } from "next/router";
 
 const LoginPage = () => {
   const [code, setCode] = useState("");
@@ -9,7 +10,14 @@ const LoginPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    // Resetowanie błędu
     setError("");
+
+    // Logowanie zmiennych środowiskowych
+    console.log("Sanity API Version:", process.env.NEXT_PUBLIC_SANITY_API_VERSION);
+    console.log("Sanity Dataset:", process.env.NEXT_PUBLIC_SANITY_DATASET);
+    console.log("Sanity Project ID:", process.env.NEXT_PUBLIC_SANITY_PROJECT_ID);
+    console.log("Sanity API Token:", process.env.NEXT_PUBLIC_SANITY_API_TOKEN);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,9 +28,13 @@ const LoginPage = () => {
     try {
       const response = await fetch("/api/authenticate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}` // Jeśli to potrzebne
+        },
         body: JSON.stringify({ code }),
       });
+      
 
       const data = await response.json();
 

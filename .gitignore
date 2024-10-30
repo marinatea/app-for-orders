@@ -1,7 +1,10 @@
 .lh
 node_modules
-next
-client-development
 server-development
 .next
-next-env.d.ts
+# Environment variables
+.env
+.env.local
+.sanity/
+.sanity/runtime/index.html
+.sanity/runtime/app.js
