@@ -7,3 +7,4 @@ server-development
 .env.local
 .sanity/
 .sanity/runtime/index.html
+.sanity/runtime/app.js
