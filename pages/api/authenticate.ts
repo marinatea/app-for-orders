@@ -1,7 +1,8 @@
+// api/authentificate.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { code } = req.body; // Odbieramy tylko kod
+  const { code } = req.body;
 
   // Lista unikalnych kodów dla użytkowników, w tym kod admina
   const validCodes = ["abc123", "xyz789", "admin"];

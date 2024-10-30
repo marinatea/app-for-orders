@@ -4,4 +4,5 @@ next
 client-development
 server-development
 .next
-next-env.d.ts
+.env.local
+
