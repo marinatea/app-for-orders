@@ -10,14 +10,7 @@ const LoginPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Resetowanie błędu
     setError("");
-
-    // Logowanie zmiennych środowiskowych
-    console.log("Sanity API Version:", process.env.NEXT_PUBLIC_SANITY_API_VERSION);
-    console.log("Sanity Dataset:", process.env.NEXT_PUBLIC_SANITY_DATASET);
-    console.log("Sanity Project ID:", process.env.NEXT_PUBLIC_SANITY_PROJECT_ID);
-    console.log("Sanity API Token:", process.env.NEXT_PUBLIC_SANITY_API_TOKEN);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,11 +50,11 @@ const LoginPage = () => {
   return (
     <div className={styles.login}>
       <div className={styles.login__form}>
-        <h1 className={styles.login__title}>WINETU Login</h1>
+        <h1 className={styles.login__title}>WINETU</h1>
         <form onSubmit={handleSubmit}>
-          <input
+          <input 
             type="text"
-            placeholder="Wpisz kod"
+            placeholder="Wpisz swój kod"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             className={styles.login__input}
@@ -72,7 +65,7 @@ const LoginPage = () => {
             className={styles.login__button}
             disabled={isLoading}
           >
-            {isLoading ? "Logowanie..." : "Zaloguj się"}
+            {isLoading ? "Logowanie..." : "Wejdź"}
           </button>
         </form>
         {error && <p className={styles.login__error}>{error}</p>}
