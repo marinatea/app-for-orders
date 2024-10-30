@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { client } from "../sanity/appfororders/lib/client";
+import { client } from "../sanity/lib/client";
 import styles from "../styles/productsPage.module.scss";
 
 interface Product {
