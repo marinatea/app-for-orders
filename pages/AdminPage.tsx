@@ -37,24 +37,15 @@ const AdminPage = () => {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch(
-          `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v${process.env.NEXT_PUBLIC_SANITY_API_VERSION}/data/query/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}`,
-            },
-          }
-        );
-
+        const response = await fetch("/api/products");
         if (!response.ok) {
           throw new Error("Błąd w odpowiedzi API");
         }
 
         const data = await response.json();
-        setProducts(data.result || []);
+        setProducts(data || []);
       } catch (error) {
-        console.error("Błąd podczas pobierania produktów z Sanity:", error);
+        console.error("Błąd podczas pobierania produktów:", error);
       }
     };
 
@@ -64,7 +55,11 @@ const AdminPage = () => {
 
   const getOrderLink = (productId: string) => {
     const product = products.find((p) => p._id === productId);
-    console.log("Generowany link zamówienia:", product?.orderLink);
+    if (!product) {
+      console.warn("Nie znaleziono produktu dla ID:", productId);
+    } else {
+      console.log("Znaleziony link zamówienia:", product.orderLink);
+    }
     return product ? product.orderLink : "#";
   };
 
@@ -81,7 +76,7 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
-      <h2>Użytkownik: {user?.userName || 'Nie zalogowany'}</h2>
+      <h2>Użytkownik: {user?.userName || "Nie zalogowany"}</h2>
       <button onClick={deleteAllCarts} className={styles.admin__button}>
         Usuń wszystkie zamówienia
       </button>
