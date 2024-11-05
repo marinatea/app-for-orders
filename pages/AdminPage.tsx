@@ -38,7 +38,7 @@ const AdminPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch(
-          `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2024-10-29/data/query/production`,
+          `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v${process.env.NEXT_PUBLIC_SANITY_API_VERSION}/data/query/${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
           {
             method: "GET",
             headers: {
