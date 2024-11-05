@@ -1,19 +1,36 @@
-// api/authentificate.ts
+// api/authenticate.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
+import sanityClient from '@sanity/client';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { code } = req.body;
+// Ustawienia Sanity
+const client = sanityClient({
+  projectId: 'pmpsddkp', // Twój projectId
+  dataset: 'products', // Twój dataset
+  useCdn: true, // Używaj CDN dla wydajności
+});
 
-  // Lista unikalnych kodów dla użytkowników, w tym kod admina
-  const validCodes = ["abc123", "xyz789", "admin"];
-  const ADMIN_CODE = "admin";
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { userId } = req.body;
 
-  // Weryfikacja kodu użytkownika lub kodu administratora
-  if (code === ADMIN_CODE) {
-    res.status(200).json({ success: true, role: "admin" });
-  } else if (validCodes.includes(code)) {
-    res.status(200).json({ success: true, role: "user", userId: code });
-  } else {
-    res.status(401).json({ success: false, message: "Nieprawidłowy kod!" });
+  // Sprawdź, czy userId został przesłany
+  if (!userId) {
+    return res.status(400).json({ success: false, message: "Brak userId!" });
+  }
+
+  // Wyszukaj użytkownika w Sanity
+  const query = `*[_type == "user" && userId == $userId][0]`;
+  const params = { userId };
+
+  try {
+    const user = await client.fetch(query, params);
+
+    if (user) {
+      const role = user.role;
+      res.status(200).json({ success: true, role, userName: user.userName, userId });
+    } else {
+      res.status(401).json({ success: false, message: "Nieprawidłowy kod!" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Wystąpił błąd!" });
   }
 }

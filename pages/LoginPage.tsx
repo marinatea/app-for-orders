@@ -2,12 +2,15 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
 import { useRouter } from "next/router";
+import { UserProvider, useUser } from "../context/UserContext";
 
 const LoginPage = () => {
-  const [code, setCode] = useState("");
+  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { setUser } = useUser();
 
   useEffect(() => {
     setError("");
@@ -21,21 +24,23 @@ const LoginPage = () => {
     try {
       const response = await fetch("/api/authenticate", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}` // Jeśli to potrzebne
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}`, // Jeśli to potrzebne
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ userId, userName }),
       });
-      
 
       const data = await response.json();
+      console.log("Odpowiedź z API:", data);
 
       if (data.success) {
+        setUser({ userId: data.userId, userName: data.name || userName, role: data.role });
+
         if (data.role === "admin") {
-          router.push("/admin");
+          router.push("/AdminPage");
         } else {
-          router.push(`/products?user=${data.userId}`);
+          router.push(`/UserPage?${data.userName}`);
         }
       } else {
         setError(data.message || "Nieprawidłowy kod!");
@@ -52,16 +57,16 @@ const LoginPage = () => {
       <div className={styles.login__form}>
         <h1 className={styles.login__title}>WINETU</h1>
         <form onSubmit={handleSubmit}>
-          <input 
+          <input
             type="text"
             placeholder="Wpisz swój kod"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
             className={styles.login__input}
             required
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className={styles.login__button}
             disabled={isLoading}
           >
@@ -74,4 +79,10 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+const WrappedLoginPage = () => (
+  <UserProvider>
+    <LoginPage />
+  </UserProvider>
+);
+
+export default WrappedLoginPage;

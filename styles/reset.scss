@@ -1,0 +1,99 @@
+/* Resetowanie stylów dla SCSS */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%; // Ustaw podstawowy rozmiar czcionki (16px)
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%; // Zapobiega zmianom rozmiaru tekstu w Safari na urządzeniach mobilnych
+  -webkit-font-smoothing: antialiased; // Wygładzanie czcionek
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #333;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit; // Dziedziczenie stylów czcionki
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: inherit;
+}
+
+strong {
+  font-weight: bold;
+}
+
+code,
+pre {
+  font-family: "Courier New", Courier, monospace;
+}
+
+textarea {
+  resize: vertical; // Pozwala użytkownikowi zmieniać rozmiar tylko pionowo
+}
+
+/* Dodatkowe resetowanie formularzy */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
