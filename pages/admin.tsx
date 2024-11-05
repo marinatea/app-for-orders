@@ -14,6 +14,7 @@ interface CartItem {
 }
 
 interface Cart {
+  userName: string;
   cart: CartItem[];
 }
 
@@ -34,9 +35,6 @@ const AdminPage = () => {
 
     const fetchProducts = async () => {
       try {
-        // Logowanie tokenu do debugowania
-        console.log("Token API:", process.env.SANITY_API_TOKEN);
-    
         const response = await fetch(
           `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2024-10-29/data/query/production`,
           {
@@ -46,38 +44,31 @@ const AdminPage = () => {
             },
           }
         );
-    
+
         if (!response.ok) {
           throw new Error("Błąd w odpowiedzi API");
         }
-    
+
         const data = await response.json();
-        console.log("Pobrane produkty:", data.result);
         setProducts(data.result || []);
       } catch (error) {
         console.error("Błąd podczas pobierania produktów z Sanity:", error);
       }
     };
-    
 
     fetchCarts();
     fetchProducts();
   }, []);
 
   const getOrderLink = (productId: string) => {
-    // Sprawdź, czy products jest zdefiniowane
-    if (!products || products.length === 0) {
-      return "#"; // Lub inna logika, np. informacja o braku produktów
-    }
-
     const product = products.find((p) => p._id === productId);
-    return product ? product.orderLink : "#"; // Zwraca link lub "#", jeśli nie znaleziono
+    return product ? product.orderLink : "#";
   };
 
   const deleteAllCarts = async () => {
     const response = await fetch("/api/cart", { method: "DELETE" });
     if (response.ok) {
-      setCarts([]); // Wyczyść lokalny stan po usunięciu zamówień
+      setCarts([]);
       alert("Wszystkie zamówienia zostały usunięte.");
     } else {
       console.error("Błąd podczas usuwania zamówień");
@@ -95,10 +86,11 @@ const AdminPage = () => {
       ) : (
         carts.map((cart, index) => (
           <div key={index} className={styles.admin__cart}>
+            <h3>Użytkownik: {cart.userName}</h3>
             <ul>
               {cart.cart.map((item) => (
                 <li key={item._id} className={styles.admin__cart__item}>
-                  {item.name} - {item.quantity} sztuk
+                  {item.name} - {item.quantity} szt.
                   <button>
                     <a
                       href={getOrderLink(item._id)}

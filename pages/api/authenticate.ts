@@ -2,17 +2,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { code } = req.body;
+  const { code, userName } = req.body;
 
   // Lista unikalnych kodów dla użytkowników, w tym kod admina
-  const validCodes = ["abc123", "xyz789", "admin"];
-  const ADMIN_CODE = "admin";
+  const validUsers = [
+    { code: "abc123", userName: "Jan" },
+    { code: "xyz789", userName: "Anna" },
+    { code: "admin", userName: "admin" },
+  ];
 
-  // Weryfikacja kodu użytkownika lub kodu administratora
-  if (code === ADMIN_CODE) {
-    res.status(200).json({ success: true, role: "admin" });
-  } else if (validCodes.includes(code)) {
-    res.status(200).json({ success: true, role: "user", userId: code });
+  const user = validUsers.find((user) => user.code === code);
+
+  if (user) {
+    const role = code === "admin" ? "admin" : "user";
+    res.status(200).json({ success: true, role, name: user.userName, userId: code });
   } else {
     res.status(401).json({ success: false, message: "Nieprawidłowy kod!" });
   }
