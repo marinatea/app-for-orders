@@ -42,7 +42,7 @@ const AdminPage = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${process.env.SANITY_API_TOKEN}`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}`,
             },
           }
         );
@@ -64,6 +64,7 @@ const AdminPage = () => {
 
   const getOrderLink = (productId: string) => {
     const product = products.find((p) => p._id === productId);
+    console.log("Generowany link zamówienia:", product?.orderLink);
     return product ? product.orderLink : "#";
   };
 
