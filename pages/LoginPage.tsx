@@ -32,16 +32,15 @@ const LoginPage = () => {
       });
 
       const data = await response.json();
-      console.log("Odpowiedź z API:", data); // Zobacz, co jest zwracane
-
+      console.log("Odpowiedź z API:", data);
 
       if (data.success) {
-        setUser({ userId: data.userId, userName: data.name || userName });
+        setUser({ userId: data.userId, userName: data.name || userName, role: data.role });
 
         if (data.role === "admin") {
-          router.push("/admin");
+          router.push("/AdminPage");
         } else {
-          router.push(`/products?userId=${data.userId}`);
+          router.push(`/UserPage?${data.userName}`);
         }
       } else {
         setError(data.message || "Nieprawidłowy kod!");

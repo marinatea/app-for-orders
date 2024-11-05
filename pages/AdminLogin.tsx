@@ -17,7 +17,7 @@ const AdminLoginPage = () => {
 
     const data = await response.json();
     if (data.success && data.role === "admin") {
-      router.push("/admin");
+      router.push("/AdminPage");
     } else {
       setError("Nieprawidłowe hasło!");
     }

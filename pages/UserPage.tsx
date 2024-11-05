@@ -1,8 +1,9 @@
-// pages/products.tsx
+// pages/UserPage.tsx
 import { useState } from "react";
 import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
 import styles from "../styles/productsPage.module.scss";
 import { client } from "../lib/client";
+import router from "next/dist/client/router";
 
 interface Product {
   _id: number;
@@ -13,10 +14,10 @@ interface Product {
   orderLink: string;
 }
 
-const ProductsPage = ({ initialProducts }) => {
+const UserPage  = ({ initialProducts }) => {
   const { user } = useUser();
   const [cart, setCart] = useState<Product[]>([]);
-
+  
   const addToCart = (product: Product, quantity: number) => {
     if (quantity > 0) {
       setCart((prevCart) => {
@@ -90,7 +91,7 @@ export async function getStaticProps() {
 
 const WrappedProductsPage = (props) => (
   <UserProvider>
-    <ProductsPage {...props} />
+    <UserPage  {...props} />
   </UserProvider>
 );
 

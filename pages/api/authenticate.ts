@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const user = await client.fetch(query, params);
 
     if (user) {
-      const role = user.role; // Przechowuj rolę użytkownika
+      const role = user.role;
       res.status(200).json({ success: true, role, userName: user.userName, userId });
     } else {
       res.status(401).json({ success: false, message: "Nieprawidłowy kod!" });
