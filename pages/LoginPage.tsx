@@ -1,22 +1,16 @@
 // pages/LoginPage.tsx
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
-import { useRouter } from "next/router";
 import { UserProvider, useUser } from "../context/UserContext";
+import router from "next/router";
 
 const LoginPage = () => {
+  const { setUser, user } = useUser();
   const [userId, setUserId] = useState("");
-  const [userName, setUserName] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const { setUser } = useUser();
 
-  useEffect(() => {
-    setError("");
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -26,22 +20,16 @@ const LoginPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SANITY_API_TOKEN}`, // Jeśli to potrzebne
         },
-        body: JSON.stringify({ userId, userName }),
+        body: JSON.stringify({ userId }),
       });
 
       const data = await response.json();
       console.log("Odpowiedź z API:", data);
 
       if (data.success) {
-        setUser({ userId: data.userId, userName: data.name || userName, role: data.role });
-
-        if (data.role === "admin") {
-          router.push("/AdminPage");
-        } else {
-          router.push(`/UserPage?${data.userName}`);
-        }
+        // Ustaw użytkownika w kontekście
+        setUser({ userId: data.userId, userName: data.userName, role: data.role });
       } else {
         setError(data.message || "Nieprawidłowy kod!");
       }
@@ -52,11 +40,22 @@ const LoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    // Przekierowanie po ustawieniu użytkownika
+    if (user) {
+      if (user.role === "admin") {
+        router.push("/AdminPage");
+      } else {
+        router.push(`/UserPage?${user.userName}`);
+      }
+    }
+  }, [user]); // Nasłuchuj na zmiany w stanie użytkownika
+
   return (
     <div className={styles.login}>
       <div className={styles.login__form}>
         <h1 className={styles.login__title}>WINETU</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <input
             type="text"
             placeholder="Wpisz swój kod"

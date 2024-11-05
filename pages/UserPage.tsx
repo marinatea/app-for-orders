@@ -4,6 +4,7 @@ import { UserProvider, useUser } from "../context/UserContext"; // Importuj kont
 import styles from "../styles/productsPage.module.scss";
 import { client } from "../lib/client";
 import router from "next/dist/client/router";
+import { Key } from "readline";
 
 interface Product {
   _id: number;
@@ -14,10 +15,12 @@ interface Product {
   orderLink: string;
 }
 
-const UserPage  = ({ initialProducts }) => {
+const UserPage = ({ initialProducts }) => {
   const { user } = useUser();
+  console.log("Użytkownik z kontekstu:", user);
   const [cart, setCart] = useState<Product[]>([]);
-  
+  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+
   const addToCart = (product: Product, quantity: number) => {
     if (quantity > 0) {
       setCart((prevCart) => {
@@ -33,6 +36,11 @@ const UserPage  = ({ initialProducts }) => {
           return [...prevCart, { ...product, quantity }];
         }
       });
+
+      setQuantities((prevQuantities) => ({
+        ...prevQuantities,
+        [product._id]: quantity,
+      }));
     }
   };
 
@@ -52,12 +60,13 @@ const UserPage  = ({ initialProducts }) => {
 
     alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
     setCart([]);
+    setQuantities({});
   };
 
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
-      <h2>Użytkownik: {user?.userName || 'Nie zalogowany'}</h2>
+      <h2>Użytkownik: {user?.userName || "Nie zalogowany"}</h2>
       <ul className={styles.products__list}>
         {initialProducts.map((product: Product) => (
           <li key={product._id} className={styles.products__item}>
@@ -65,6 +74,7 @@ const UserPage  = ({ initialProducts }) => {
             <input
               type="number"
               min="1"
+              value={quantities[product._id] || ""}
               onChange={(e) => addToCart(product, Number(e.target.value))}
               className={styles.products__item__input}
             />
@@ -91,7 +101,7 @@ export async function getStaticProps() {
 
 const WrappedProductsPage = (props) => (
   <UserProvider>
-    <UserPage  {...props} />
+    <UserPage {...props} />
   </UserProvider>
 );
 
