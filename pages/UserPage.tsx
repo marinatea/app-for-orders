@@ -16,6 +16,7 @@ interface Product {
 
 const UserPage  = ({ initialProducts }) => {
   const { user } = useUser();
+  console.log("Użytkownik z kontekstu:", user);
   const [cart, setCart] = useState<Product[]>([]);
   
   const addToCart = (product: Product, quantity: number) => {
