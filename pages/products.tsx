@@ -1,4 +1,6 @@
+// pages/products.tsx
 import { useState } from "react";
+import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
 import styles from "../styles/productsPage.module.scss";
 import { client } from "../lib/client";
 
@@ -11,9 +13,9 @@ interface Product {
   orderLink: string;
 }
 
-const ProductsPage = ({ user, initialProducts }) => {
+const ProductsPage = ({ initialProducts }) => {
+  const { user } = useUser();
   const [cart, setCart] = useState<Product[]>([]);
-  const [products, setProducts] = useState<Product[]>(initialProducts); // Używamy początkowych danych
 
   const addToCart = (product: Product, quantity: number) => {
     if (quantity > 0) {
@@ -48,13 +50,15 @@ const ProductsPage = ({ user, initialProducts }) => {
     });
 
     alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
+    setCart([]);
   };
 
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
+      <h2>Użytkownik: {user?.userName || 'Nie zalogowany'}</h2>
       <ul className={styles.products__list}>
-        {products.map((product: Product) => (
+        {initialProducts.map((product: Product) => (
           <li key={product._id} className={styles.products__item}>
             <span className={styles.products__item__name}>{product.name}</span>
             <input
@@ -84,4 +88,10 @@ export async function getStaticProps() {
   };
 }
 
-export default ProductsPage;
+const WrappedProductsPage = (props) => (
+  <UserProvider>
+    <ProductsPage {...props} />
+  </UserProvider>
+);
+
+export default WrappedProductsPage;

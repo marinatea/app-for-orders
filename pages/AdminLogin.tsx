@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 const AdminLoginPage = () => {
-  const [code, setCode] = useState("");
+  const [userId, setuserId] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -12,7 +12,7 @@ const AdminLoginPage = () => {
     const response = await fetch("/api/authenticate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ userId }),
     });
 
     const data = await response.json();
@@ -28,10 +28,10 @@ const AdminLoginPage = () => {
       <h1>Logowanie administratora</h1>
       <form onSubmit={handleAdminLogin}>
         <input
-          type="code"
+          type="userId"
           placeholder="Wpisz hasło"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
+          value={userId}
+          onChange={(e) => setuserId(e.target.value)}
         />
         <button type="submit">Zaloguj się</button>
       </form>

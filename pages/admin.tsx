@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
+import { UserProvider, useUser } from "../context/UserContext";
 
 interface Product {
   _id: string;
@@ -19,6 +20,7 @@ interface Cart {
 }
 
 const AdminPage = () => {
+  const { user } = useUser();
   const [carts, setCarts] = useState<Cart[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -78,6 +80,7 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
+      <h2>Użytkownik: {user?.userName || 'Nie zalogowany'}</h2>
       <button onClick={deleteAllCarts} className={styles.admin__button}>
         Usuń wszystkie zamówienia
       </button>
@@ -111,4 +114,10 @@ const AdminPage = () => {
   );
 };
 
-export default AdminPage;
+const WrappedAdminPage = (props) => (
+  <UserProvider>
+    <AdminPage {...props} />
+  </UserProvider>
+);
+
+export default WrappedAdminPage;
