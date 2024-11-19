@@ -1,7 +1,7 @@
 // pages/UserPage.tsx
 import { useState } from "react";
 import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
-import styles from "../styles/productsPage.module.scss";
+import styles from "../styles/userPage.module.scss";
 import { client } from "../lib/client";
 
 interface Product {
@@ -87,20 +87,24 @@ const UserPage = ({ initialProducts }) => {
   };
 
   const uniqueCategories: string[] = Array.from(
-    new Set(initialProducts.map((product) => product.category))
-  );
+    new Set(
+      initialProducts.map((product: Product) => product.category)
+    ) as Set<string>
+  ).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
       <h2>Użytkownik: {user?.userName || "Nie zalogowany"}</h2>
-      <section>
+      <section className={styles.products__sortWrapper}>
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className={styles.products__filter}
         >
-          <option value="">Wszystkie kategorie</option>
+          <option className={styles.products__filter} value="">
+            Wszystkie kategorie
+          </option>
           {uniqueCategories.map((category) => (
             <option key={category} value={category}>
               {category}

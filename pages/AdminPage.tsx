@@ -56,11 +56,53 @@ const AdminPage = () => {
   const getOrderLink = (productId: string) => {
     const product = products.find((p) => p._id === productId);
     if (!product) {
-      console.warn("Nie znaleziono produktu dla ID:", productId);
-    } else {
-      console.log("Znaleziony link zamówienia:", product.orderLink);
+      console.warn(`Nie znaleziono produktu dla ID: ${productId}`);
+      return "#";
     }
-    return product ? product.orderLink : "#";
+    return product.orderLink;
+  };
+
+  const deleteProductFromCart = async (
+    cartIndex: number,
+    productId: string
+  ) => {
+    try {
+      const response = await fetch(
+        `/api/cart/${cartIndex}/product/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.ok) {
+        const updatedCarts = [...carts];
+        updatedCarts[cartIndex].cart = updatedCarts[cartIndex].cart.filter(
+          (item) => item._id !== productId
+        );
+        setCarts(updatedCarts);
+        alert("Produkt został usunięty z karty.");
+      } else {
+        console.error("Błąd podczas usuwania produktu z karty");
+      }
+    } catch (error) {
+      console.error("Wystąpił błąd:", error);
+    }
+  };
+
+  const deleteCart = async (cartIndex: number) => {
+    try {
+      const response = await fetch(`/api/cart/${cartIndex}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        const updatedCarts = carts.filter((_, index) => index !== cartIndex);
+        setCarts(updatedCarts);
+        alert("Karta została usunięta.");
+      } else {
+        console.error("Błąd podczas usuwania karty");
+      }
+    } catch (error) {
+      console.error("Wystąpił błąd:", error);
+    }
   };
 
   const deleteAllCarts = async () => {
@@ -90,6 +132,12 @@ const AdminPage = () => {
               {cart.cart.map((item) => (
                 <li key={item._id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
+                  <button
+                    onClick={() => deleteProductFromCart(index, item._id)}
+                    className={styles.admin__delete}
+                  >
+                    Usuń produkt
+                  </button>
                   <button>
                     <a
                       href={getOrderLink(item._id)}
@@ -103,6 +151,12 @@ const AdminPage = () => {
                 </li>
               ))}
             </ul>
+            <button
+              onClick={() => deleteCart(index)}
+              className={styles.admin__button}
+            >
+              Usuń kartę
+            </button>
           </div>
         ))
       )}

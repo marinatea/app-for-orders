@@ -39,12 +39,31 @@ $winetu-accent: #e63946;
 
     &:hover {
       background-color: darken($winetu-accent, 10%);
-      transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
     }
 
     &:active {
-      transform: translateY(1px);
+      background-color: darken($winetu-accent, 30%);
+    }
+  }
+
+  &__delete {
+    background-color: $winetu-accent;
+    color: $winetu-white;
+    padding: 0.4rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: darken($winetu-accent, 10%);
+      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+    }
+
+    &:active {
+      background-color: darken($winetu-accent, 40%);
     }
   }
 
@@ -64,7 +83,6 @@ $winetu-accent: #e63946;
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: $winetu-teal;
-      font-weight: 500;
     }
 
     &__item {
@@ -73,16 +91,15 @@ $winetu-accent: #e63946;
       align-items: center;
       padding: 0.75rem 0;
       border-bottom: 1px solid $winetu-light-gray;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-size: 1.2rem;
-      font-weight: 500;
 
       &:last-child {
         border-bottom: none;
       }
 
       &:hover {
-        background-color: $winetu-light-gray;
+        background-color: lighten($winetu-light-gray, 1%);
       }
     }
 
@@ -91,7 +108,6 @@ $winetu-accent: #e63946;
       text-decoration: none;
       transition: all 0.3s ease;
       font-size: 1.2rem;
-      font-weight: 500;
 
       &:hover {
         color: darken($winetu-teal, 15%);
