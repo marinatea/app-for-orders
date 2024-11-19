@@ -4,9 +4,9 @@ import sanityClient from '@sanity/client';
 
 // Ustawienia Sanity
 const client = sanityClient({
-  projectId: 'pmpsddkp', // Twój projectId
-  dataset: 'products', // Twój dataset
-  useCdn: true, // Używaj CDN dla wydajności
+  projectId: 'pmpsddkp',
+  dataset: 'products',
+  useCdn: true,
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
