@@ -3,6 +3,9 @@ import { useState } from "react";
 import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
 import styles from "../styles/userPage.module.scss";
 import { client } from "../lib/client";
+import Image from "next/image";
+import arrowLeft from "../img/arrow-left.png";
+import arrowRight from "../img/arrow-right.png";
 
 interface Product {
   _id: number;
@@ -20,6 +23,15 @@ const UserPage = ({ initialProducts }) => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
+
+  const getPaginatedProducts = () => {
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    return getFilteredAndSortedProducts().slice(startIndex, endIndex);
+  };
 
   const addToCart = (product: Product, quantity: number) => {
     if (quantity > 0) {
@@ -92,6 +104,17 @@ const UserPage = ({ initialProducts }) => {
     ) as Set<string>
   ).sort((a, b) => a.localeCompare(b));
 
+  const totalPages = Math.ceil(
+    getFilteredAndSortedProducts().length / productsPerPage
+  );
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
@@ -120,7 +143,7 @@ const UserPage = ({ initialProducts }) => {
         </button>
       </section>
       <ul className={styles.products__list}>
-        {getFilteredAndSortedProducts().map((product: Product) => (
+        {getPaginatedProducts().map((product: Product) => (
           <li key={product._id} className={styles.products__item}>
             <span className={styles.products__item__name}>{product.name}</span>
             <input
@@ -133,6 +156,27 @@ const UserPage = ({ initialProducts }) => {
           </li>
         ))}
       </ul>
+      <div className={styles.pagination}>
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className={styles.pagination__button}
+        >
+          {currentPage > 1 && <Image src={arrowLeft} alt="arrow-left" />}
+        </button>
+        <span className={styles.pagination__info}>
+          Strona {currentPage} z {totalPages}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          className={styles.pagination__button}
+        >
+          {currentPage < totalPages && (
+            <Image src={arrowRight} alt="arrow-right" />
+          )}
+        </button>
+      </div>
       <button onClick={handleCheckout} className={styles.products__button}>
         Złóż zamówienie
       </button>

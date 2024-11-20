@@ -136,4 +136,47 @@ $winetu-dark-gray: #333333;
       transform: translateY(1px);
     }
   }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+
+    &__button {
+      color: $winetu-white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0 1rem;
+
+      &:hover {
+        transform: scale(1.2);
+        box-shadow: 0 4px 12px rgba(0, 86, 77, 0.3);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      img {
+        width: 46px;
+        height: 46px;
+      }
+    }
+
+    &__info {
+      font-size: 1.5rem;
+      color: $winetu-dark-gray;
+      font-weight: 500;
+    }
+  }
 }
