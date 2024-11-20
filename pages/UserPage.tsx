@@ -6,6 +6,7 @@ import { client } from "../lib/client";
 import Image from "next/image";
 import ArrowLeft from "../img/arrow-left.png";
 import ArrowRight from "../img/arrow-right.png";
+import WineBottle from "./Bottle";
 
 interface Product {
   _id: number;
@@ -179,6 +180,7 @@ const UserPage = ({ initialProducts }) => {
       <button onClick={handleCheckout} className={styles.products__button}>
         Złóż zamówienie
       </button>
+      <WineBottle />
     </div>
   );
 };
