@@ -17,6 +17,7 @@ $winetu-accent: #e63946;
     box-shadow: 0 6px 18px rgba(0, 86, 77, 0.15);
   }
 
+
   &__header {
     font-size: 2.5rem;
     margin-bottom: 1.5rem;
@@ -48,9 +49,7 @@ $winetu-accent: #e63946;
   }
 
   &__delete {
-    background-color: $winetu-accent;
-    color: $winetu-white;
-    padding: 0.4rem 1.5rem;
+    background-color: transparent;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -58,13 +57,17 @@ $winetu-accent: #e63946;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: darken($winetu-accent, 10%);
-      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+      transform: scale(1.2);
     }
 
     &:active {
       background-color: darken($winetu-accent, 40%);
     }
+  }
+
+  img {
+    width: 32px;
+    height: 32px;
   }
 
   &__cart {

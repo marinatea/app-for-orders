@@ -4,8 +4,8 @@ import { UserProvider, useUser } from "../context/UserContext"; // Importuj kont
 import styles from "../styles/userPage.module.scss";
 import { client } from "../lib/client";
 import Image from "next/image";
-import arrowLeft from "../img/arrow-left.png";
-import arrowRight from "../img/arrow-right.png";
+import ArrowLeft from "../img/arrow-left.png";
+import ArrowRight from "../img/arrow-right.png";
 
 interface Product {
   _id: number;
@@ -162,7 +162,7 @@ const UserPage = ({ initialProducts }) => {
           disabled={currentPage === 1}
           className={styles.pagination__button}
         >
-          {currentPage > 1 && <Image src={arrowLeft} alt="arrow-left" />}
+          {currentPage > 1 && <Image src={ArrowLeft} alt="arrow-left" />}
         </button>
         <span className={styles.pagination__info}>
           Strona {currentPage} z {totalPages}
@@ -173,7 +173,7 @@ const UserPage = ({ initialProducts }) => {
           className={styles.pagination__button}
         >
           {currentPage < totalPages && (
-            <Image src={arrowRight} alt="arrow-right" />
+            <Image src={ArrowRight} alt="arrow-right" />
           )}
         </button>
       </div>

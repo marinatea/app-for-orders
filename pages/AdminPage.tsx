@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
+import Image from "next/image";
+import Delete from "../img/delete.png";
 
 interface Product {
   _id: string;
@@ -132,12 +134,6 @@ const AdminPage = () => {
               {cart.cart.map((item) => (
                 <li key={item._id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
-                  <button
-                    onClick={() => deleteProductFromCart(index, item._id)}
-                    className={styles.admin__delete}
-                  >
-                    Usuń produkt
-                  </button>
                   <button>
                     <a
                       href={getOrderLink(item._id)}
@@ -147,6 +143,12 @@ const AdminPage = () => {
                     >
                       Zamów produkt
                     </a>
+                  </button>
+                  <button
+                    onClick={() => deleteProductFromCart(index, item._id)}
+                    className={styles.admin__delete}
+                  >
+                    <Image src={Delete} alt="delete" />
                   </button>
                 </li>
               ))}
