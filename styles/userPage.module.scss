@@ -8,7 +8,7 @@ $winetu-dark-gray: #333333;
 
   &__header {
     font-size: 2.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     color: $winetu-teal;
     text-align: center;
     font-weight: 600;
@@ -120,7 +120,6 @@ $winetu-dark-gray: #333333;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.25rem;
-    margin-top: 2rem;
     transition: all 0.3s ease;
     display: block;
     margin-left: auto;
@@ -147,8 +146,6 @@ $winetu-dark-gray: #333333;
       color: $winetu-white;
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
       display: flex;
       justify-content: center;
       align-items: center;

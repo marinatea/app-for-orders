@@ -9,23 +9,23 @@
 }
 
 html {
-  font-size: 100%; // Ustaw podstawowy rozmiar czcionki (16px)
+  font-size: 100%;
   line-height: 1.5;
-  -webkit-text-size-adjust: 100%; // Zapobiega zmianom rozmiaru tekstu w Safari na urządzeniach mobilnych
-  -webkit-font-smoothing: antialiased; // Wygładzanie czcionek
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  background-color: #f5f5f5;
+  padding: 32px;
 }
 
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #333;
-  background-color: #fff;
   margin: 0;
   padding: 0;
-  box-sizing: border-box
+  box-sizing: border-box;
+  background-color: #f5f5f5;
 }
 
 img,
@@ -41,7 +41,7 @@ button,
 input,
 textarea,
 select {
-  font: inherit; // Dziedziczenie stylów czcionki
+  font: inherit;
 }
 
 button {
@@ -84,10 +84,9 @@ pre {
 }
 
 textarea {
-  resize: vertical; // Pozwala użytkownikowi zmieniać rozmiar tylko pionowo
+  resize: vertical;
 }
 
-/* Dodatkowe resetowanie formularzy */
 input[type="text"],
 input[type="email"],
 input[type="password"],
