@@ -7,16 +7,15 @@ $winetu-accent: #e63946;
 .admin {
   padding: 2rem;
   background-color: $winetu-light-gray;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 86, 77, 0.1);
   transition: all 0.3s ease;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 
   &:hover {
     background-color: darken($winetu-light-gray, 3%);
     box-shadow: 0 6px 18px rgba(0, 86, 77, 0.15);
   }
-
 
   &__header {
     font-size: 2.5rem;
@@ -77,15 +76,11 @@ $winetu-accent: #e63946;
     padding: 1.5rem;
     background-color: $winetu-white;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 10;
 
     &:hover {
       box-shadow: 0 6px 18px rgba(0, 86, 77, 0.2);
-    }
-
-    &__user {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: $winetu-teal;
     }
 
     &__item {
@@ -106,15 +101,12 @@ $winetu-accent: #e63946;
       }
     }
 
-    &__link {
-      color: $winetu-teal;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 1.2rem;
-
-      &:hover {
-        color: darken($winetu-teal, 15%);
-      }
+    &__optionsWrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
     }
   }
 

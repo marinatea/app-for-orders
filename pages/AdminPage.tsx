@@ -3,6 +3,9 @@ import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import Image from "next/image";
 import Delete from "../img/delete.png";
+import Send from "../img/send.png";
+
+import WineBottle from "./Bottle";
 
 interface Product {
   _id: string;
@@ -120,10 +123,7 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
-      <h2>Użytkownik: {user?.userName || "Nie zalogowany"}</h2>
-      <button onClick={deleteAllCarts} className={styles.admin__button}>
-        Usuń wszystkie zamówienia
-      </button>
+
       {carts.length === 0 ? (
         <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
       ) : (
@@ -134,22 +134,23 @@ const AdminPage = () => {
               {cart.cart.map((item) => (
                 <li key={item._id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
-                  <button>
-                    <a
-                      href={getOrderLink(item._id)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.admin__cart__link}
+                  <div className={styles.admin__cart__optionsWrapper}>
+                    <button
+                      onClick={() => deleteProductFromCart(index, item._id)}
+                      className={styles.admin__delete}
                     >
-                      Zamów produkt
-                    </a>
-                  </button>
-                  <button
-                    onClick={() => deleteProductFromCart(index, item._id)}
-                    className={styles.admin__delete}
-                  >
-                    <Image src={Delete} alt="delete" />
-                  </button>
+                      <Image src={Delete} alt="delete" />
+                    </button>
+                    <button className={styles.admin__delete}>
+                      <a
+                        href={getOrderLink(item._id)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Image src={Send} alt="send" />
+                      </a>
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -162,6 +163,11 @@ const AdminPage = () => {
           </div>
         ))
       )}
+
+      <button onClick={deleteAllCarts} className={styles.admin__button}>
+        Usuń wszystkie zamówienia
+      </button>
+      <WineBottle />
     </div>
   );
 };
