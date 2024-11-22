@@ -28,7 +28,7 @@ $winetu-dark-gray: #333333;
     form {
       display: flex;
       flex-direction: column;
-      gap: 15px; // Użyj gap wewnątrz form
+      gap: 15px;
     }
 
     &:hover {
@@ -38,10 +38,11 @@ $winetu-dark-gray: #333333;
 
   &__input {
     padding: 12px;
-    border: 2px solid $winetu-teal;
+    background-color: #f5f5f5;
     border-radius: 6px;
     font-size: 1rem;
     transition: all 0.3s ease;
+    box-shadow: 0 0 0 3px rgba(0, 86, 77, 0.2);
 
     &:focus {
       outline: none;
@@ -71,6 +72,8 @@ $winetu-dark-gray: #333333;
 
   &__title {
     color: $winetu-teal;
+    padding: 1rem;
+    font-weight: bold;
   }
 
   &__error {
