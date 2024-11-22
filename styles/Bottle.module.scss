@@ -1,0 +1,43 @@
+@import "./mixins/mixins.scss";
+
+.wineBottle {
+  position: fixed;
+  bottom: -5vh;
+  right: 5vw;
+  width: 14rem;
+  height: 70vh;
+  background-color: rgba(0, 86, 77, 0.28);
+  border-radius: 35% 35% 10% 10%;
+  z-index: -1;
+
+  @include tablet {
+    width: 11.5rem;
+  }
+  @include desktop {
+    width: 16rem;
+  }
+  @include large-desktop {
+    width: 20rem;
+  }
+}
+
+.neck {
+  position: absolute;
+  top: -45%;
+  left: 50%;
+  width: 4rem;
+  height: 45%;
+  background-color: rgba(0, 86, 77, 0.28);
+  border-radius: 20px 20px 0px 0px;
+  transform: translateX(-50%);
+
+  @include tablet {
+    width: 3.5rem;
+  }
+  @include desktop {
+    width: 5.4rem;
+  }
+  @include large-desktop {
+    width: 6rem;
+  }
+}

@@ -13,6 +13,8 @@ $winetu-dark-gray: #333333;
   align-items: center;
   height: 100vh;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 
   &__form {
     display: flex;
@@ -22,8 +24,9 @@ $winetu-dark-gray: #333333;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 86, 77, 0.1);
     transition: all 0.3s ease;
-    width: 70%;
     padding: 2rem;
+    max-width: 120em;
+
 
     form {
       display: flex;

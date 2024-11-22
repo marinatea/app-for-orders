@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import router from "next/router";
+import Bottle from "./Bottle";
 
 const LoginPage = () => {
   const { setUser, user } = useUser();
@@ -29,7 +30,11 @@ const LoginPage = () => {
 
       if (data.success) {
         // Ustaw użytkownika w kontekście
-        setUser({ userId: data.userId, userName: data.userName, role: data.role });
+        setUser({
+          userId: data.userId,
+          userName: data.userName,
+          role: data.role,
+        });
       } else {
         setError(data.message || "Nieprawidłowy kod!");
       }
@@ -74,6 +79,7 @@ const LoginPage = () => {
         </form>
         {error && <p className={styles.login__error}>{error}</p>}
       </div>
+      <Bottle />
     </div>
   );
 };
