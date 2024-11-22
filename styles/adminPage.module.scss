@@ -12,11 +12,6 @@ $winetu-accent: #e63946;
   position: relative;
   z-index: 1;
 
-  &:hover {
-    background-color: darken($winetu-light-gray, 3%);
-    box-shadow: 0 6px 18px rgba(0, 86, 77, 0.15);
-  }
-
   &__header {
     font-size: 2.5rem;
     margin-bottom: 1.5rem;
