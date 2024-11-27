@@ -58,19 +58,31 @@ const AdminPage = () => {
   }, []);
 
   const getOrderLink = (productId: string) => {
+    if (products.length === 0) {
+      console.warn("Brak danych produktów.");
+      return "#";
+    }
+
     const product = products.find((p) => p.id === productId);
     if (!product) {
       console.warn(`Nie znaleziono produktu dla ID: ${productId}`);
       return "#";
     }
+
     return product.orderLink;
   };
 
-  const deleteProductFromCart = async (cartIndex: number, productId: string) => {
+  const deleteProductFromCart = async (
+    cartIndex: number,
+    productId: string
+  ) => {
     try {
-      const response = await fetch(`/api/cart/${cartIndex}/product/${productId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/cart/${cartIndex}/product/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       const textResponse = await response.text();
       console.log("Odpowiedź z serwera:", textResponse);
@@ -119,6 +131,10 @@ const AdminPage = () => {
       console.error("Błąd podczas usuwania zamówień");
     }
   };
+
+  if (products.length === 0) {
+    return <div>Ładowanie danych produktów...</div>;
+  }
 
   return (
     <div className={styles.admin}>
