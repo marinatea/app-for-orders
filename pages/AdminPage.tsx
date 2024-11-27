@@ -8,13 +8,13 @@ import Send from "../img/send.png";
 import WineBottle from "./Bottle";
 
 interface Product {
-  _id: string;
+  id: string;
   name: string;
   orderLink: string;
 }
 
 interface CartItem {
-  _id: string;
+  id: string;
   name: string;
   quantity: number;
 }
@@ -46,7 +46,6 @@ const AdminPage = () => {
         if (!response.ok) {
           throw new Error("Błąd w odpowiedzi API");
         }
-
         const data = await response.json();
         setProducts(data || []);
       } catch (error) {
@@ -59,7 +58,7 @@ const AdminPage = () => {
   }, []);
 
   const getOrderLink = (productId: string) => {
-    const product = products.find((p) => p._id === productId);
+    const product = products.find((p) => p.id === productId);
     if (!product) {
       console.warn(`Nie znaleziono produktu dla ID: ${productId}`);
       return "#";
@@ -67,29 +66,30 @@ const AdminPage = () => {
     return product.orderLink;
   };
 
-  const deleteProductFromCart = async (
-    cartIndex: number,
-    productId: string
-  ) => {
+  const deleteProductFromCart = async (cartIndex: number, productId: string) => {
     try {
-      const response = await fetch(
-        `/api/cart/${cartIndex}/product/${productId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`/api/cart/${cartIndex}/product/${productId}`, {
+        method: "DELETE",
+      });
+
+      const textResponse = await response.text();
+      console.log("Odpowiedź z serwera:", textResponse);
+
+      const responseData = JSON.parse(textResponse);
       if (response.ok) {
         const updatedCarts = [...carts];
         updatedCarts[cartIndex].cart = updatedCarts[cartIndex].cart.filter(
-          (item) => item._id !== productId
+          (item) => item.id !== productId
         );
         setCarts(updatedCarts);
         alert("Produkt został usunięty z karty.");
       } else {
-        console.error("Błąd podczas usuwania produktu z karty");
+        console.error("Błąd podczas usuwania produktu z karty:", responseData);
+        alert("Wystąpił błąd podczas usuwania produktu.");
       }
     } catch (error) {
       console.error("Wystąpił błąd:", error);
+      alert("Wystąpił błąd podczas usuwania produktu.");
     }
   };
 
@@ -101,9 +101,9 @@ const AdminPage = () => {
       if (response.ok) {
         const updatedCarts = carts.filter((_, index) => index !== cartIndex);
         setCarts(updatedCarts);
-        alert("Karta została usunięta.");
+        alert("Koszyk został usunięty.");
       } else {
-        console.error("Błąd podczas usuwania karty");
+        console.error("Błąd podczas usuwania koszyka");
       }
     } catch (error) {
       console.error("Wystąpił błąd:", error);
@@ -132,18 +132,18 @@ const AdminPage = () => {
             <h3>Użytkownik: {cart.userName}</h3>
             <ul>
               {cart.cart.map((item) => (
-                <li key={item._id} className={styles.admin__cart__item}>
+                <li key={item.id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
                   <div className={styles.admin__cart__optionsWrapper}>
                     <button
-                      onClick={() => deleteProductFromCart(index, item._id)}
+                      onClick={() => deleteProductFromCart(index, item.id)}
                       className={styles.admin__delete}
                     >
                       <Image src={Delete} alt="delete" />
                     </button>
                     <button className={styles.admin__delete}>
                       <a
-                        href={getOrderLink(item._id)}
+                        href={getOrderLink(item.id)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -158,7 +158,7 @@ const AdminPage = () => {
               onClick={() => deleteCart(index)}
               className={styles.admin__button}
             >
-              Usuń kartę
+              Usuń koszyk
             </button>
           </div>
         ))

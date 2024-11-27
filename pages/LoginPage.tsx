@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
-import router from "next/router";
+import { useRouter } from "next/router";
 import Bottle from "./Bottle";
 
 const LoginPage = () => {
@@ -10,6 +10,9 @@ const LoginPage = () => {
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const [redirecting, setRedirecting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +32,6 @@ const LoginPage = () => {
       console.log("Odpowiedź z API:", data);
 
       if (data.success) {
-        // Ustaw użytkownika w kontekście
         setUser({
           userId: data.userId,
           userName: data.userName,
@@ -46,15 +48,19 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    // Przekierowanie po ustawieniu użytkownika
     if (user) {
+      setRedirecting(true);
       if (user.role === "admin") {
         router.push("/AdminPage");
-      } else {
-        router.push(`/UserPage?${user.userName}`);
+      } else if (user.role === "user") {
+        router.push(`/UserPage?userName=${user.userName}`);
       }
     }
-  }, [user]); // Nasłuchuj na zmiany w stanie użytkownika
+  }, [user, router]);
+
+  if (redirecting) {
+    return <div>Przekierowywanie...</div>;
+  }
 
   return (
     <div className={styles.login}>

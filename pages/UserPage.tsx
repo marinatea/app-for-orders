@@ -1,32 +1,50 @@
-// pages/UserPage.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
 import styles from "../styles/userPage.module.scss";
-import { client } from "../lib/client";
 import Image from "next/image";
 import ArrowLeft from "../img/arrow-left.png";
 import ArrowRight from "../img/arrow-right.png";
 import WineBottle from "./Bottle";
 
 interface Product {
-  _id: number;
+  id: string;
   category: string;
   name: string;
   description: string;
-  quantity?: number;
   orderLink: string;
+  store: string;
 }
 
-const UserPage = ({ initialProducts }) => {
+const UserPage = () => {
   const { user } = useUser();
   const [cart, setCart] = useState<Product[]>([]);
-  const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [products, setProducts] = useState<Product[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [selectedStore, setSelectedStore] = useState<string>("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        } else {
+          console.error("Błąd podczas pobierania produktów");
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania produktów:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const getPaginatedProducts = () => {
     const startIndex = (currentPage - 1) * productsPerPage;
@@ -37,22 +55,18 @@ const UserPage = ({ initialProducts }) => {
   const addToCart = (product: Product, quantity: number) => {
     if (quantity > 0) {
       setCart((prevCart) => {
-        const existingProduct = prevCart.find(
-          (item) => item._id === product._id
-        );
-
+        const existingProduct = prevCart.find((item) => item.id === product.id);
         if (existingProduct) {
           return prevCart.map((item) =>
-            item._id === product._id ? { ...item, quantity } : item
+            item.id === product.id ? { ...item, quantity } : item
           );
         } else {
           return [...prevCart, { ...product, quantity }];
         }
       });
-
       setQuantities((prevQuantities) => ({
         ...prevQuantities,
-        [product._id]: quantity,
+        [product.id]: quantity,
       }));
     }
   };
@@ -65,28 +79,36 @@ const UserPage = ({ initialProducts }) => {
       return;
     }
 
-    await fetch("/api/cart", {
+    const response = await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user, cart, isFinalized: true }),
     });
 
-    alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
-    setCart([]);
-    setQuantities({});
+    if (response.ok) {
+      alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
+      setCart([]);
+      setQuantities({});
+    } else {
+      alert("Błąd podczas składania zamówienia.");
+    }
   };
 
   const getFilteredAndSortedProducts = () => {
-    let filteredProducts = initialProducts;
+    let filteredProducts = products;
 
-    // Filtrowanie po kategorii
     if (selectedCategory) {
       filteredProducts = filteredProducts.filter(
         (product: Product) => product.category === selectedCategory
       );
     }
 
-    // Sortowanie po nazwie
+    if (selectedStore) {
+      filteredProducts = filteredProducts.filter(
+        (product: Product) => product.store === selectedStore
+      );
+    }
+
     filteredProducts.sort((a: Product, b: Product) => {
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === "asc" ? comparison : -comparison;
@@ -100,14 +122,17 @@ const UserPage = ({ initialProducts }) => {
   };
 
   const uniqueCategories: string[] = Array.from(
-    new Set(
-      initialProducts.map((product: Product) => product.category)
-    ) as Set<string>
+    new Set(products.map((product: Product) => product.category))
+  ).sort((a, b) => a.localeCompare(b));
+
+  const uniqueStores: string[] = Array.from(
+    new Set(products.map((product: Product) => product.store))
   ).sort((a, b) => a.localeCompare(b));
 
   const totalPages = Math.ceil(
     getFilteredAndSortedProducts().length / productsPerPage
   );
+
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -125,12 +150,22 @@ const UserPage = ({ initialProducts }) => {
           onChange={(e) => setSelectedCategory(e.target.value)}
           className={styles.products__filter}
         >
-          <option className={styles.products__filter} value="">
-            Wszystkie kategorie
-          </option>
+          <option value="">Wszystkie kategorie</option>
           {uniqueCategories.map((category) => (
             <option key={category} value={category}>
               {category}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedStore}
+          onChange={(e) => setSelectedStore(e.target.value)}
+          className={styles.products__filter}
+        >
+          <option value="">Wszystkie sklepy</option>
+          {uniqueStores.map((store) => (
+            <option key={store} value={store}>
+              {store}
             </option>
           ))}
         </select>
@@ -142,20 +177,22 @@ const UserPage = ({ initialProducts }) => {
           Sortuj od {sortOrder === "asc" ? "A do Z" : "Z do A"}
         </button>
       </section>
+
       <ul className={styles.products__list}>
         {getPaginatedProducts().map((product: Product) => (
-          <li key={product._id} className={styles.products__item}>
+          <li key={product.id} className={styles.products__item}>
             <span className={styles.products__item__name}>{product.name}</span>
             <input
               type="number"
               min="1"
-              value={quantities[product._id] || ""}
+              value={quantities[product.id] || ""}
               onChange={(e) => addToCart(product, Number(e.target.value))}
               className={styles.products__item__input}
             />
           </li>
         ))}
       </ul>
+
       <div className={styles.pagination}>
         <button
           onClick={handlePreviousPage}
@@ -177,6 +214,7 @@ const UserPage = ({ initialProducts }) => {
           )}
         </button>
       </div>
+
       <button onClick={handleCheckout} className={styles.products__button}>
         Złóż zamówienie
       </button>
@@ -185,21 +223,10 @@ const UserPage = ({ initialProducts }) => {
   );
 };
 
-export async function getStaticProps() {
-  const query = `*[_type == "product"] { _id, category, name, description, orderLink }`;
-  const initialProducts = await client.fetch(query);
-
-  return {
-    props: {
-      initialProducts,
-    },
-  };
-}
-
-const WrappedProductsPage = (props) => (
+const WrappedUserPage = () => (
   <UserProvider>
-    <UserPage {...props} />
+    <UserPage />
   </UserProvider>
 );
 
-export default WrappedProductsPage;
+export default WrappedUserPage;

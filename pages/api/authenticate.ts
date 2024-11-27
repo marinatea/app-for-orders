@@ -1,36 +1,43 @@
-// api/authenticate.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import sanityClient from '@sanity/client';
+//api/authenticate.ts
 
-// Ustawienia Sanity
-const client = sanityClient({
-  projectId: 'pmpsddkp',
-  dataset: 'products',
-  useCdn: true,
-});
+import type { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const prisma = new PrismaClient();
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { userId } = req.body;
 
-  // Sprawdź, czy userId został przesłany
   if (!userId) {
     return res.status(400).json({ success: false, message: "Brak userId!" });
   }
 
-  // Wyszukaj użytkownika w Sanity
-  const query = `*[_type == "user" && userId == $userId][0]`;
-  const params = { userId };
-
   try {
-    const user = await client.fetch(query, params);
+    const user = await prisma.user.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
 
     if (user) {
-      const role = user.role;
-      res.status(200).json({ success: true, role, userName: user.userName, userId });
+      res.status(200).json({
+        success: true,
+        role: user.role,
+        userName: user.userName,
+        userId,
+      });
     } else {
-      res.status(401).json({ success: false, message: "Nieprawidłowy kod!" });
+      res
+        .status(401)
+        .json({ success: false, message: "Nie znaleziono użytkownika!" });
     }
   } catch (error) {
+    console.error("Błąd podczas komunikacji z bazą danych:", error);
     res.status(500).json({ success: false, message: "Wystąpił błąd!" });
+  } finally {
+    await prisma.$disconnect();
   }
 }
