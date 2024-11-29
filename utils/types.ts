@@ -22,8 +22,8 @@ export interface Cart {
 }
 
 export interface User {
-  id: string;
   userId: string;
+  codeTOLogin: string;
   userName?: string;
   role: "admin" | "user";
 }
