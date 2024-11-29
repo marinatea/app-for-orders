@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: "Metoda nieobsługiwana." });
   }
 
-  const { userId } = req.body;  // Otrzymujemy tylko userId (kod)
+  const { userId } = req.body;
 
   if (!userId) {
     return res.status(400).json({ success: false, message: "Brak userId!" });
@@ -29,8 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({
       success: true,
-      id: user.id,
       userId: user.userId,
+      codeToLogin: user.codeToLogin,
       userName: user.userName,
       role: user.role,
     });

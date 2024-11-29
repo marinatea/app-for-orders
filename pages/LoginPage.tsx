@@ -1,24 +1,24 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
-import { UserProvider, useUser } from "../context/UserContext";  // Poprawny import
+import { UserProvider, useUser } from "../context/UserContext";
 import { useRouter } from "next/router";
 import Bottle from "./Bottle";
 
 // LoginPage komponent
 const LoginPage = () => {
-  const { setUser, user } = useUser();  // Funkcja setUser powinna być dostępna
-  const [userId, setUserId] = useState("");  // Trzymamy userId (kod)
-  const [error, setError] = useState("");  // Obsługa błędów
-  const [isLoading, setIsLoading] = useState(false);  // Stan ładowania
+  const { setUser, user } = useUser();
+  const [userId, setUserId] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
 
   // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();  // Zatrzymanie domyślnego działania formularza
+    e.preventDefault();
     setIsLoading(true);
-    setError("");  // Resetowanie błędów
+    setError("");
 
     try {
       // Wysłanie zapytania do API
@@ -27,11 +27,11 @@ const LoginPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId }),  // Wysłanie userId (kod)
+        body: JSON.stringify({ userId }),
       });
 
-      const data = await response.json();  // Odbieramy odpowiedź z API
-      console.log("Odpowiedź z API:", data);  // Logowanie odpowiedzi API
+      const data = await response.json();
+      console.log("Odpowiedź z API:", data);
 
       if (data.success) {
         // Jeśli logowanie było udane, ustawiamy użytkownika w kontekście
@@ -43,7 +43,11 @@ const LoginPage = () => {
         });
 
         // Przekierowanie po udanym logowaniu
-        router.push(data.role === "admin" ? `/AdminPage?userName=${data.userName}` : `/UserPage?userName=${data.userName}`);
+        router.push(
+          data.role === "admin"
+            ? `/AdminPage?userName=${data.userName}`
+            : `/UserPage?userName=${data.userName}`
+        );
       } else {
         // W przypadku błędu wyświetlamy odpowiedni komunikat
         setError(data.message || "Nieprawidłowy kod!");
@@ -52,7 +56,7 @@ const LoginPage = () => {
       console.error("Błąd podczas logowania:", err);
       setError("Wystąpił błąd podczas logowania. Spróbuj ponownie później.");
     } finally {
-      setIsLoading(false);  // Kończenie ładowania
+      setIsLoading(false);
     }
   };
 
@@ -60,7 +64,11 @@ const LoginPage = () => {
   useEffect(() => {
     if (user) {
       setRedirecting(true);
-      router.push(user.role === "admin" ? `/AdminPage?userName=${user.userName}` : `/UserPage?userName=${user.userName}`);
+      router.push(
+        user.role === "admin"
+          ? `/AdminPage?userName=${user.userName}`
+          : `/UserPage?userName=${user.userName}`
+      );
     }
   }, [user, router]);
 
