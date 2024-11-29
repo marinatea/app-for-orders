@@ -1,57 +1,108 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
 
-let cartData: {
-  user: string;
-  cart: { id: string; quantity: number }[];
-  isFinalized: boolean;
-  userName: string;
-}[] = [];
+const prisma = new PrismaClient();
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { cartIndex, productId } = req.query;
-  if (req.method === "DELETE") {
-    if (cartIndex && productId) {
-      const cartIndexNum = parseInt(cartIndex as string);
-      const productIdStr = productId as string;
 
-      if (cartIndexNum >= 0 && cartIndexNum < cartData.length) {
-        const cart = cartData[cartIndexNum];
-
-        const productIndex = cart.cart.findIndex(
-          (item) => item.id === productIdStr
-        );
-
-        if (productIndex !== -1) {
-          cart.cart.splice(productIndex, 1);
-          return res.status(200).json({
-            success: true,
-            message: "Produkt został usunięty z koszyka.",
-          });
-        } else {
-          return res
-            .status(404)
-            .json({ error: "Produkt nie znaleziony w koszyku." });
-        }
-      } else {
-        return res.status(404).json({ error: "Koszyk nie znaleziony." });
-      }
-    }
-    return res.status(400).json({ error: "Nieprawidłowe zapytanie." });
-  }
-
+  // Obsługuje zapytanie GET do pobrania wszystkich koszyków
   if (req.method === "GET") {
-    res.status(200).json(cartData);
+    try {
+      const carts = await prisma.cart.findMany({
+        include: { products: true },
+      });
+      return res.status(200).json(carts);
+    } catch (error) {
+      console.error("Błąd podczas pobierania koszyków:", error);
+      return res.status(500).json({ error: "Błąd serwera" });
+    }
   }
 
-  else if (req.method === "POST") {
-    const { user, cart, userName } = req.body;
+  // Obsługuje zapytanie PATCH do aktualizacji koszyka
+  if (req.method === "PATCH") {
+    try {
+      if (!cartIndex || !productId) {
+        return res.status(400).json({ error: "Brak wymaganego parametru" });
+      }
 
-    cartData.push({ user, cart, isFinalized: false, userName });
+      const updatedCart = await prisma.cart.update({
+        where: { id: Number(cartIndex) },
+        data: {
+          products: {
+            update: {
+              where: { id: productId as string },
+              data: { ordered: req.body.ordered },
+            },
+          },
+        },
+      });
 
-    res.status(200).json({ success: true });
+      return res.status(200).json(updatedCart);
+    } catch (error) {
+      console.error("Błąd podczas aktualizacji koszyka:", error);
+      return res
+        .status(500)
+        .json({ error: "Nie udało się zaktualizować koszyka" });
+    }
   }
 
-  else {
-    res.status(405).json({ success: false, message: "Metoda nieobsługiwana." });
+  // Obsługuje zapytanie DELETE do usuwania produktu z koszyka
+  if (req.method === "DELETE") {
+    try {
+      if (!cartIndex || !productId) {
+        return res.status(400).json({ error: "Brak wymaganego parametru" });
+      }
+
+      await prisma.cart.update({
+        where: { id: Number(cartIndex) },
+        data: {
+          products: {
+            delete: { id: productId as string },
+          },
+        },
+      });
+
+      return res
+        .status(200)
+        .json({ success: true, message: "Produkt usunięty" });
+    } catch (error) {
+      console.error("Błąd podczas usuwania produktu:", error);
+      return res.status(500).json({ error: "Nie udało się usunąć produktu" });
+    }
   }
+
+  // Obsługuje zapytanie POST do tworzenia nowego koszyka
+  if (req.method === "POST") {
+    try {
+      const { user, cart } = req.body; // user i cart przychodzą z frontend
+      if (!user || !cart) {
+        return res
+          .status(400)
+          .json({ error: "Brak danych do zapisania koszyka" });
+      }
+
+      // Dodajemy koszyk użytkownika do bazy danych
+      const savedCart = await prisma.cart.create({
+        data: {
+          userId: user.id, // Zakładając, że masz relację z użytkownikiem
+          products: {
+            create: cart.map((product) => ({
+              productId: product.id,
+              quantity: product.quantity,
+            })),
+          },
+        },
+      });
+
+      return res.status(200).json(savedCart);
+    } catch (error) {
+      console.error("Błąd podczas dodawania koszyka:", error);
+      return res.status(500).json({ error: "Błąd serwera" });
+    }
+  }
+  return res.status(405).json({ message: "Metoda nieobsługiwana" });
 }

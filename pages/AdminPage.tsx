@@ -2,27 +2,14 @@ import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import Image from "next/image";
-import Delete from "../img/delete.png";
 import Send from "../img/send.png";
+import CheckboxDone from "../img/checkbox-full.png"; // Zaznaczony checkbox
+import Checkbox from "../img/checkbox.png"; // Domyślny checkbox
 
 import WineBottle from "./Bottle";
+import { Cart, Product } from "../utils/types";
 
-interface Product {
-  id: string;
-  name: string;
-  orderLink: string;
-}
 
-interface CartItem {
-  id: string;
-  name: string;
-  quantity: number;
-}
-
-interface Cart {
-  userName: string;
-  cart: CartItem[];
-}
 
 const AdminPage = () => {
   const { user } = useUser();
@@ -72,63 +59,25 @@ const AdminPage = () => {
     return product.orderLink;
   };
 
-  const deleteProductFromCart = async (
-    cartIndex: number,
-    productId: string
-  ) => {
+  const toggleProductOrdered = async (cartIndex: number, productId: string) => {
     try {
-      const response = await fetch(
-        `/api/cart/${cartIndex}/product/${productId}`,
-        {
-          method: "DELETE",
-        }
+      const updatedCarts = [...carts];
+      const product = updatedCarts[cartIndex].cart.find(
+        (item) => item.id === productId
       );
-
-      const textResponse = await response.text();
-      console.log("Odpowiedź z serwera:", textResponse);
-
-      const responseData = JSON.parse(textResponse);
-      if (response.ok) {
-        const updatedCarts = [...carts];
-        updatedCarts[cartIndex].cart = updatedCarts[cartIndex].cart.filter(
-          (item) => item.id !== productId
-        );
+      if (product) {
+        product.ordered = !product.ordered;
         setCarts(updatedCarts);
-        alert("Produkt został usunięty z karty.");
-      } else {
-        console.error("Błąd podczas usuwania produktu z karty:", responseData);
-        alert("Wystąpił błąd podczas usuwania produktu.");
+
+        // Wysyłanie zmian na serwer (opcjonalne)
+        await fetch(`/api/cart/${cartIndex}/product/${productId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ordered: product.ordered }),
+        });
       }
     } catch (error) {
-      console.error("Wystąpił błąd:", error);
-      alert("Wystąpił błąd podczas usuwania produktu.");
-    }
-  };
-
-  const deleteCart = async (cartIndex: number) => {
-    try {
-      const response = await fetch(`/api/cart/${cartIndex}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        const updatedCarts = carts.filter((_, index) => index !== cartIndex);
-        setCarts(updatedCarts);
-        alert("Koszyk został usunięty.");
-      } else {
-        console.error("Błąd podczas usuwania koszyka");
-      }
-    } catch (error) {
-      console.error("Wystąpił błąd:", error);
-    }
-  };
-
-  const deleteAllCarts = async () => {
-    const response = await fetch("/api/cart", { method: "DELETE" });
-    if (response.ok) {
-      setCarts([]);
-      alert("Wszystkie zamówienia zostały usunięte.");
-    } else {
-      console.error("Błąd podczas usuwania zamówień");
+      console.error("Wystąpił błąd podczas aktualizacji produktu:", error);
     }
   };
 
@@ -151,12 +100,15 @@ const AdminPage = () => {
                 <li key={item.id} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
                   <div className={styles.admin__cart__optionsWrapper}>
-                    <button
-                      onClick={() => deleteProductFromCart(index, item.id)}
-                      className={styles.admin__delete}
+                    <div
+                      className={styles.admin__checkbox}
+                      onClick={() => toggleProductOrdered(index, item.id)}
                     >
-                      <Image src={Delete} alt="delete" />
-                    </button>
+                      <Image
+                        src={item.ordered ? CheckboxDone : Checkbox}
+                        alt={item.ordered ? "Zaznaczone" : "Niezaznaczone"}
+                      />
+                    </div>
                     <button className={styles.admin__delete}>
                       <a
                         href={getOrderLink(item.id)}
@@ -170,19 +122,10 @@ const AdminPage = () => {
                 </li>
               ))}
             </ul>
-            <button
-              onClick={() => deleteCart(index)}
-              className={styles.admin__button}
-            >
-              Usuń koszyk
-            </button>
           </div>
         ))
       )}
 
-      <button onClick={deleteAllCarts} className={styles.admin__button}>
-        Usuń wszystkie zamówienia
-      </button>
       <WineBottle />
     </div>
   );

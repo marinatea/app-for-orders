@@ -12,6 +12,20 @@ $winetu-accent: #e63946;
   position: relative;
   z-index: 1;
 
+  &__checkbox {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   &__header {
     font-size: 2.5rem;
     margin-bottom: 1.5rem;

@@ -5,15 +5,9 @@ import Image from "next/image";
 import ArrowLeft from "../img/arrow-left.png";
 import ArrowRight from "../img/arrow-right.png";
 import WineBottle from "./Bottle";
+import { Product } from "../utils/types";
 
-interface Product {
-  id: string;
-  category: string;
-  name: string;
-  description: string;
-  orderLink: string;
-  store: string;
-}
+
 
 const UserPage = () => {
   const { user } = useUser();
@@ -46,30 +40,30 @@ const UserPage = () => {
     fetchProducts();
   }, []);
 
-  const getPaginatedProducts = () => {
-    const startIndex = (currentPage - 1) * productsPerPage;
-    const endIndex = startIndex + productsPerPage;
-    return getFilteredAndSortedProducts().slice(startIndex, endIndex);
-  };
-
-  const addToCart = (product: Product, quantity: number) => {
+  const addToCart = async (product: Product, quantity: number) => {
+    if (!user || !user.id) {
+      alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
+      return;
+    }
+  
     if (quantity > 0) {
-      setCart((prevCart) => {
-        const existingProduct = prevCart.find((item) => item.id === product.id);
-        if (existingProduct) {
-          return prevCart.map((item) =>
-            item.id === product.id ? { ...item, quantity } : item
-          );
-        } else {
-          return [...prevCart, { ...product, quantity }];
-        }
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: { id: user.id },
+          cart: [{ id: product.id, quantity }],
+        }),
       });
-      setQuantities((prevQuantities) => ({
-        ...prevQuantities,
-        [product.id]: quantity,
-      }));
+  
+      if (response.ok) {
+        alert("Produkt dodany do koszyka!");
+      } else {
+        alert("Błąd podczas dodawania produktu do koszyka");
+      }
     }
   };
+  
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -96,26 +90,33 @@ const UserPage = () => {
 
   const getFilteredAndSortedProducts = () => {
     let filteredProducts = products;
-
+  
     if (selectedCategory) {
       filteredProducts = filteredProducts.filter(
         (product: Product) => product.category === selectedCategory
       );
     }
-
+  
     if (selectedStore) {
       filteredProducts = filteredProducts.filter(
         (product: Product) => product.store === selectedStore
       );
     }
-
+  
     filteredProducts.sort((a: Product, b: Product) => {
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === "asc" ? comparison : -comparison;
     });
-
+  
     return filteredProducts;
   };
+
+  const getPaginatedProducts = () => {
+  const filteredAndSortedProducts = getFilteredAndSortedProducts();
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  return filteredAndSortedProducts.slice(startIndex, endIndex);
+};
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));

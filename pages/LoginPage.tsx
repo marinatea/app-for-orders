@@ -1,60 +1,66 @@
-// pages/LoginPage.tsx
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
-import { UserProvider, useUser } from "../context/UserContext";
+import { UserProvider, useUser } from "../context/UserContext";  // Poprawny import
 import { useRouter } from "next/router";
 import Bottle from "./Bottle";
 
+// LoginPage komponent
 const LoginPage = () => {
-  const { setUser, user } = useUser();
-  const [userId, setUserId] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { setUser, user } = useUser();  // Funkcja setUser powinna być dostępna
+  const [userId, setUserId] = useState("");  // Trzymamy userId (kod)
+  const [error, setError] = useState("");  // Obsługa błędów
+  const [isLoading, setIsLoading] = useState(false);  // Stan ładowania
 
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
 
+  // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault();  // Zatrzymanie domyślnego działania formularza
     setIsLoading(true);
-    setError("");
+    setError("");  // Resetowanie błędów
 
     try {
+      // Wysłanie zapytania do API
       const response = await fetch("/api/authenticate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId }),  // Wysłanie userId (kod)
       });
 
-      const data = await response.json();
-      console.log("Odpowiedź z API:", data);
+      const data = await response.json();  // Odbieramy odpowiedź z API
+      console.log("Odpowiedź z API:", data);  // Logowanie odpowiedzi API
 
       if (data.success) {
+        // Jeśli logowanie było udane, ustawiamy użytkownika w kontekście
         setUser({
+          id: data.id,
           userId: data.userId,
           userName: data.userName,
           role: data.role,
         });
+
+        // Przekierowanie po udanym logowaniu
+        router.push(data.role === "admin" ? `/AdminPage?userName=${data.userName}` : `/UserPage?userName=${data.userName}`);
       } else {
+        // W przypadku błędu wyświetlamy odpowiedni komunikat
         setError(data.message || "Nieprawidłowy kod!");
       }
     } catch (err) {
+      console.error("Błąd podczas logowania:", err);
       setError("Wystąpił błąd podczas logowania. Spróbuj ponownie później.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false);  // Kończenie ładowania
     }
   };
 
+  // Jeżeli użytkownik już jest zalogowany, przekierowujemy
   useEffect(() => {
     if (user) {
       setRedirecting(true);
-      if (user.role === "admin") {
-        router.push("/AdminPage");
-      } else if (user.role === "user") {
-        router.push(`/UserPage?userName=${user.userName}`);
-      }
+      router.push(user.role === "admin" ? `/AdminPage?userName=${user.userName}` : `/UserPage?userName=${user.userName}`);
     }
   }, [user, router]);
 
@@ -90,6 +96,7 @@ const LoginPage = () => {
   );
 };
 
+// Wrapping LoginPage z kontekstem użytkownika
 const WrappedLoginPage = () => (
   <UserProvider>
     <LoginPage />
