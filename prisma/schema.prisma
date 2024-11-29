@@ -9,10 +9,11 @@ generator client {
 
 model User {
   userId      String  @id @default(cuid())
-  codeToLogin String
+  codeToLogin String @unique
   userName    String?
   role        String
 }
+
 
 model Cart {
   cartId   String  @id @default(cuid())

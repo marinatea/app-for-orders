@@ -7,7 +7,7 @@ import Bottle from "./Bottle";
 // LoginPage komponent
 const LoginPage = () => {
   const { setUser, user } = useUser();
-  const [userId, setUserId] = useState("");
+  const [codeToLogin, setCodeToLogin] = useState(""); // Używamy codeToLogin
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,47 +16,42 @@ const LoginPage = () => {
 
   // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault(); // Zapobiegamy domyślnemu działaniu formularza
 
-    try {
-      // Wysłanie zapytania do API
-      const response = await fetch("/api/authenticate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
+    setIsLoading(true); // Ustawiamy stan ładowania
+
+    const response = await fetch("/api/authenticate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        codeToLogin: codeToLogin, // Używamy codeToLogin, które jest wprowadzone przez użytkownika
+      }),
+    });
+
+    const data = await response.json();
+    console.log("Odpowiedź z API:", data);
+
+    setIsLoading(false); // Wyłączamy stan ładowania
+
+    if (response.ok) {
+      // Jeśli odpowiedź jest ok, zapisujemy dane użytkownika i przekierowujemy
+      setUser({
+        userId: data.userId,
+        userName: data.userName,
+        role: data.role,
+        codeToLogin: data.codeToLogin,
       });
 
-      const data = await response.json();
-      console.log("Odpowiedź z API:", data);
-
-      if (data.success) {
-        // Jeśli logowanie było udane, ustawiamy użytkownika w kontekście
-        setUser({
-          id: data.id,
-          userId: data.userId,
-          userName: data.userName,
-          role: data.role,
-        });
-
-        // Przekierowanie po udanym logowaniu
-        router.push(
-          data.role === "admin"
-            ? `/AdminPage?userName=${data.userName}`
-            : `/UserPage?userName=${data.userName}`
-        );
-      } else {
-        // W przypadku błędu wyświetlamy odpowiedni komunikat
-        setError(data.message || "Nieprawidłowy kod!");
-      }
-    } catch (err) {
-      console.error("Błąd podczas logowania:", err);
-      setError("Wystąpił błąd podczas logowania. Spróbuj ponownie później.");
-    } finally {
-      setIsLoading(false);
+      router.push(
+        data.role === "admin"
+          ? `/AdminPage?userName=${data.userName}`
+          : `/UserPage?userName=${data.userName}`
+      );
+    } else {
+      // Jeśli wystąpił błąd, wyświetlamy komunikat o błędzie
+      setError(data.message);
     }
   };
 
@@ -83,9 +78,9 @@ const LoginPage = () => {
         <form onSubmit={handleLogin}>
           <input
             type="text"
-            placeholder="Wpisz swój kod"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
+            placeholder="Wpisz swój codeToLogin"
+            value={codeToLogin} // Używamy codeToLogin jako wartości formularza
+            onChange={(e) => setCodeToLogin(e.target.value)} // Aktualizujemy stan codeToLogin
             className={styles.login__input}
             required
           />

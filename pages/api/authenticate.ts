@@ -1,5 +1,3 @@
-// api/authenticate.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
@@ -7,25 +5,32 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
+    console.error("Nieobsługiwana metoda:", req.method);
     return res.status(405).json({ message: "Metoda nieobsługiwana." });
   }
 
-  const { userId } = req.body;
+  const { codeToLogin } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ success: false, message: "Brak userId!" });
+  console.log("Otrzymane codeToLogin:", codeToLogin);
+
+  if (!codeToLogin || codeToLogin.trim().length === 0) {
+    console.error("Brak codeToLogin!");
+    return res.status(400).json({ success: false, message: "Brak codeToLogin!" });
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { userId },
+    console.log("Wyszukiwanie użytkownika w bazie danych...");
+
+    const user = await prisma.user.findFirst({
+      where: { codeToLogin },  // Szukamy użytkownika po codeToLogin
     });
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Nie znaleziono użytkownika!" });
+      console.error("Nie znaleziono użytkownika dla codeToLogin:", codeToLogin);
+      return res.status(404).json({ success: false, message: "Nie znaleziono użytkownika!" });
     }
+
+    console.log("Znaleziony użytkownik:", user);
 
     return res.status(200).json({
       success: true,
@@ -36,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (error) {
     console.error("Błąd podczas komunikacji z bazą danych:", error);
-    res.status(500).json({ success: false, message: "Wystąpił błąd!" });
+    return res.status(500).json({ success: false, message: "Wystąpił błąd!" });
   } finally {
     await prisma.$disconnect();
   }

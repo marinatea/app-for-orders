@@ -29,5 +29,8 @@ CREATE TABLE "Product" (
     CONSTRAINT "Product_pkey" PRIMARY KEY ("productId")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "User_codeToLogin_key" ON "User"("codeToLogin");
+
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("cartId") ON DELETE RESTRICT ON UPDATE CASCADE;
