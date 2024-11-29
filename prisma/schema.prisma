@@ -8,17 +8,25 @@ generator client {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  userId   String @unique
-  userName String?
-  role     String
+  userId      String  @id @default(cuid())
+  codeToLogin String
+  userName    String?
+  role        String
+}
+
+model Cart {
+  cartId   String  @id @default(cuid())
+  userId   String
+  products Product[]
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  orderLink   String
+  productId String  @id @default(cuid())
+  name      String
+  orderLink String
   description String?
-  category    String?
-  store       String?
+  category   String?
+  store      String?
+  cartId     String  
+  cart       Cart    @relation(fields: [cartId], references: [cartId]) 
 }
