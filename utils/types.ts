@@ -23,7 +23,7 @@ export interface Cart {
 
 export interface User {
   userId: string;
-  codeTOLogin: string;
+  codeToLogin: string;
   userName?: string;
   role: "admin" | "user";
 }
