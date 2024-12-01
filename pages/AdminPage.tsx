@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import Image from "next/image";
@@ -131,7 +131,7 @@ const AdminPage = () => {
   );
 };
 
-const WrappedAdminPage = (props) => (
+const WrappedAdminPage = (props: JSX.IntrinsicAttributes) => (
   <UserProvider>
     <AdminPage {...props} />
   </UserProvider>

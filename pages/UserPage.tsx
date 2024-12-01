@@ -41,7 +41,7 @@ const UserPage = () => {
   }, []);
 
   const addToCart = async (product: Product, quantity: number) => {
-    if (!user || !user.id) {
+    if (!user || !user.userId) {
       alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
       return;
     }
@@ -51,7 +51,7 @@ const UserPage = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user: { id: user.id },
+          user: { id: user.userId },
           cart: [{ id: product.id, quantity }],
         }),
       });

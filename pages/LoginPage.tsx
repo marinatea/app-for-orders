@@ -78,9 +78,9 @@ const LoginPage = () => {
         <form onSubmit={handleLogin}>
           <input
             type="text"
-            placeholder="Wpisz swój codeToLogin"
-            value={codeToLogin} // Używamy codeToLogin jako wartości formularza
-            onChange={(e) => setCodeToLogin(e.target.value)} // Aktualizujemy stan codeToLogin
+            placeholder="Wpisz swój kod"
+            value={codeToLogin}
+            onChange={(e) => setCodeToLogin(e.target.value)}
             className={styles.login__input}
             required
           />

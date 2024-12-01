@@ -22,12 +22,13 @@ model Cart {
 }
 
 model Product {
-  productId String  @id @default(cuid())
-  name      String
-  orderLink String
+  productId   String  @id @default(cuid())
+  name        String
+  orderLink   String
   description String?
-  category   String?
-  store      String?
-  cartId     String  
-  cart       Cart    @relation(fields: [cartId], references: [cartId]) 
+  category    String?
+  store       String?
+  cartId      String?
+  ordered     Boolean  @default(false) // Add this field if not present
+  cart        Cart?    @relation(fields: [cartId], references: [cartId]) 
 }

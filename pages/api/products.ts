@@ -19,10 +19,10 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     try {
-      const { name, price } = req.body;
+      const { name, orderLink } = req.body;
 
       const product = await prisma.product.create({
-        data: { name, price },
+        data: { name, orderLink },
       });
 
       return res.status(201).json(product);

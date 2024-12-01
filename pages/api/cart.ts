@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import { Product } from "../../utils/types";
 
 const prisma = new PrismaClient();
 
@@ -30,11 +31,11 @@ export default async function handler(
       }
 
       const updatedCart = await prisma.cart.update({
-        where: { id: Number(cartIndex) },
+        where: { cartId: String(cartIndex) },
         data: {
           products: {
             update: {
-              where: { id: productId as string },
+              where: { productId: productId as string },
               data: { ordered: req.body.ordered },
             },
           },
@@ -58,10 +59,10 @@ export default async function handler(
       }
 
       await prisma.cart.update({
-        where: { id: Number(cartIndex) },
+        where: { cartId: String(cartIndex) },
         data: {
           products: {
-            delete: { id: productId as string },
+            delete: { productId: productId as string },
           },
         },
       });
@@ -90,7 +91,7 @@ export default async function handler(
         data: {
           userId: user.id, // Zakładając, że masz relację z użytkownikiem
           products: {
-            create: cart.map((product) => ({
+            create: cart.map((product: Product) => ({
               productId: product.id,
               quantity: product.quantity,
             })),
