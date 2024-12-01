@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("Wyszukiwanie użytkownika w bazie danych...");
 
     const user = await prisma.user.findFirst({
-      where: { codeToLogin },  // Szukamy użytkownika po codeToLogin
+      where: { codeToLogin: codeToLogin },  // Szukamy użytkownika po codeToLogin
     });
 
     if (!user) {
