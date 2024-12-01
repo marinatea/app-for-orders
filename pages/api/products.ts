@@ -17,19 +17,6 @@ export default async function handler(
     } finally {
       await prisma.$disconnect();
     }
-  } else if (req.method === "POST") {
-    try {
-      const { name, price } = req.body;
-
-      const product = await prisma.product.create({
-        data: { name, price },
-      });
-
-      return res.status(201).json(product);
-    } catch (error) {
-      console.error("Błąd podczas dodawania produktu:", error);
-      res.status(500).json({ error: "Nie udało się dodać produktu." });
-    }
   } else {
     res.status(405).json({ message: "Metoda nieobsługiwana." });
   }

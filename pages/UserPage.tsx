@@ -26,22 +26,23 @@ const UserPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch("/api/products");
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data);
-        } else {
-          console.error("Błąd podczas pobierania produktów");
+        if (!response.ok) {
+          console.error("Błąd odpowiedzi z API:", response.statusText);
+          throw new Error("Błąd odpowiedzi z API");
         }
+        const data = await response.json();
+        setProducts(data);
       } catch (error) {
         console.error("Błąd podczas pobierania produktów:", error);
       }
     };
+    
 
     fetchProducts();
   }, []);
 
   const addToCart = async (product: Product, quantity: number) => {
-    if (!user || !user.id) {
+    if (!user || !user.userId) {
       alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
       return;
     }
@@ -51,7 +52,7 @@ const UserPage = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user: { id: user.id },
+          user: { id: user.userId },
           cart: [{ id: product.id, quantity }],
         }),
       });

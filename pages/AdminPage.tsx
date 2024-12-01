@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import Image from "next/image";
@@ -8,8 +8,6 @@ import Checkbox from "../img/checkbox.png"; // Domyślny checkbox
 
 import WineBottle from "./Bottle";
 import { Cart, Product } from "../utils/types";
-
-
 
 const AdminPage = () => {
   const { user } = useUser();
@@ -88,7 +86,7 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
-
+      <h3>Użytkownik, który zrobił to zamówienie: ${user?.userName}</h3>
       {carts.length === 0 ? (
         <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
       ) : (
@@ -131,7 +129,7 @@ const AdminPage = () => {
   );
 };
 
-const WrappedAdminPage = (props) => (
+const WrappedAdminPage = (props: JSX.IntrinsicAttributes) => (
   <UserProvider>
     <AdminPage {...props} />
   </UserProvider>
