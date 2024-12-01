@@ -26,9 +26,6 @@ model Product {
   productId   String  @id @default(cuid())
   name        String
   orderLink   String
-  productId   String  @id @default(cuid())
-  name        String
-  orderLink   String
   description String?
   category    String?
   store       String?
