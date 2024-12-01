@@ -9,8 +9,6 @@ import Checkbox from "../img/checkbox.png"; // Domyślny checkbox
 import WineBottle from "./Bottle";
 import { Cart, Product } from "../utils/types";
 
-
-
 const AdminPage = () => {
   const { user } = useUser();
   const [carts, setCarts] = useState<Cart[]>([]);
@@ -88,7 +86,7 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
-
+      <h3>Użytkownik, który zrobił to zamówienie: ${user?.userName}</h3>
       {carts.length === 0 ? (
         <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
       ) : (

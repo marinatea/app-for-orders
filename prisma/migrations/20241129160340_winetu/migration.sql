@@ -24,7 +24,10 @@ CREATE TABLE "Product" (
     "description" TEXT,
     "category" TEXT,
     "store" TEXT,
-    "cartId" TEXT NOT NULL,
+    "cartId" TEXT,
+    "userId" TEXT,
+    "userName" TEXT,
+    "ordered" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("productId")
 );
@@ -32,5 +35,11 @@ CREATE TABLE "Product" (
 -- CreateIndex
 CREATE UNIQUE INDEX "User_codeToLogin_key" ON "User"("codeToLogin");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Cart_userId_key" ON "Cart"("userId");
+
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("cartId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Cart" ADD CONSTRAINT "Cart_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Product" ADD CONSTRAINT "Product_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("cartId") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -12,12 +12,13 @@ model User {
   codeToLogin String @unique
   userName    String?
   role        String
+  cart        Cart? 
 }
 
-
 model Cart {
-  cartId   String  @id @default(cuid())
-  userId   String
+  cartId   String   @id @default(cuid())
+  userId   String   @unique // Dodajemy unikalność dla userId
+  user     User     @relation(fields: [userId], references: [userId])
   products Product[]
 }
 
@@ -25,10 +26,16 @@ model Product {
   productId   String  @id @default(cuid())
   name        String
   orderLink   String
+  productId   String  @id @default(cuid())
+  name        String
+  orderLink   String
   description String?
   category    String?
   store       String?
   cartId      String?
-  ordered     Boolean  @default(false) // Add this field if not present
-  cart        Cart?    @relation(fields: [cartId], references: [cartId]) 
+  cart        Cart?    @relation(fields: [cartId], references: [cartId])
+  userId      String?
+  userName    String?
+  ordered     Boolean  @default(false)
 }
+

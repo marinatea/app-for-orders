@@ -26,16 +26,17 @@ const UserPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch("/api/products");
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data);
-        } else {
-          console.error("Błąd podczas pobierania produktów");
+        if (!response.ok) {
+          console.error("Błąd odpowiedzi z API:", response.statusText);
+          throw new Error("Błąd odpowiedzi z API");
         }
+        const data = await response.json();
+        setProducts(data);
       } catch (error) {
         console.error("Błąd podczas pobierania produktów:", error);
       }
     };
+    
 
     fetchProducts();
   }, []);
