@@ -7,7 +7,7 @@ import Bottle from "./Bottle";
 // LoginPage komponent
 const LoginPage = () => {
   const { setUser, user } = useUser();
-  const [codeToLogin, setCodeToLogin] = useState(""); // Używamy codeToLogin
+  const [codeToLogin, setCodeToLogin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,9 +16,8 @@ const LoginPage = () => {
 
   // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Zapobiegamy domyślnemu działaniu formularza
-
-    setIsLoading(true); // Ustawiamy stan ładowania
+    e.preventDefault();
+    setIsLoading(true);
 
     const response = await fetch("/api/authenticate", {
       method: "POST",
@@ -26,17 +25,16 @@ const LoginPage = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        codeToLogin: codeToLogin, // Używamy codeToLogin, które jest wprowadzone przez użytkownika
+        codeToLogin: codeToLogin, 
       }),
     });
 
     const data = await response.json();
     console.log("Odpowiedź z API:", data);
 
-    setIsLoading(false); // Wyłączamy stan ładowania
+    setIsLoading(false);
 
     if (response.ok) {
-      // Jeśli odpowiedź jest ok, zapisujemy dane użytkownika i przekierowujemy
       setUser({
         userId: data.userId,
         userName: data.userName,
@@ -50,12 +48,10 @@ const LoginPage = () => {
           : `/UserPage?userName=${data.userName}`
       );
     } else {
-      // Jeśli wystąpił błąd, wyświetlamy komunikat o błędzie
       setError(data.message);
     }
   };
 
-  // Jeżeli użytkownik już jest zalogowany, przekierowujemy
   useEffect(() => {
     if (user) {
       setRedirecting(true);
