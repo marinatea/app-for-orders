@@ -79,6 +79,11 @@ const AdminPage = () => {
     return <div>Ładowanie danych produktów...</div>;
   }
 
+  if (user && user.role !== 'admin') {
+    return <div>Brak uprawnień do wyświetlania tej strony.</div>; // Sprawdzanie roli użytkownika
+  }
+
+
   return (
     <div className={styles.admin}>
     <h1 className={styles.admin__header}>Panel Admina</h1>

@@ -8,7 +8,6 @@ $winetu-dark-gray: #333333;
   position: relative;
   z-index: 1;
 
-
   &__header {
     font-size: 2.5rem;
     margin-bottom: 1rem;
@@ -16,6 +15,11 @@ $winetu-dark-gray: #333333;
     text-align: center;
     font-weight: 600;
     letter-spacing: 1px;
+
+    &__username {
+      padding: 1.5rem;
+      color: $winetu-dark-gray;
+    }
   }
 
   &__sortWrapper {

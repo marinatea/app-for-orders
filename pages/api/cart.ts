@@ -25,11 +25,13 @@ export default async function handler(
           },
         },
       });
-      const response = carts.map((cart: { user: { userName: string; }; }) => ({
-        ...cart,
-        userName: cart.user.userName,
-      }));
-      
+      const response = carts.map(
+        (cart: { user: { userName: string | null } }) => ({
+          ...cart,
+          userName: cart.user.userName ?? "Unknown",
+        })
+      );
+
       res.json(response);
       return res.status(200).json(carts);
     } catch (error) {
@@ -72,14 +74,25 @@ export default async function handler(
         return res.status(400).json({ error: "Missing required parameters" });
       }
 
+      // Krok 1: Znajdź CartProduct na podstawie cartId i productId
+      const cartProduct = await prisma.cartProduct.findFirst({
+        where: {
+          cartId: cartId as string, // Używamy oddzielnych pól
+          productId: productId as string, // Używamy oddzielnych pól
+        },
+      });
+
+      // Sprawdzenie, czy produkt w koszyku istnieje
+      if (!cartProduct) {
+        return res.status(404).json({ error: "Cart product not found" });
+      }
+
+      // Krok 2: Zaktualizuj rekord na podstawie znalezionego ID
       const updatedCartProduct = await prisma.cartProduct.update({
         where: {
-          cartId_productId: {
-            cartId: cartId as string,
-            productId: productId as string,
-          },
+          id: cartProduct.id, // Aktualizujemy za pomocą ID rekordu
         },
-        data: { quantity: req.body.quantity },
+        data: { quantity: req.body.quantity }, // Aktualizacja ilości
       });
 
       return res.status(200).json(updatedCartProduct);
@@ -95,18 +108,25 @@ export default async function handler(
         return res.status(400).json({ error: "Missing required parameters" });
       }
 
-      await prisma.cartProduct.delete({
+      // Używamy `findFirst` i następnie `delete`
+      const cartProduct = await prisma.cartProduct.findFirst({
         where: {
-          cartId_productId: {
-            cartId: cartId as string,
-            productId: productId as string,
-          },
+          cartId: cartId as string, // Oddzielnie `cartId` i `productId`
+          productId: productId as string, // Oddzielnie `cartId` i `productId`
         },
       });
 
-      return res
-        .status(200)
-        .json({ success: true, message: "Product removed" });
+      if (!cartProduct) {
+        return res.status(404).json({ error: "Cart product not found" });
+      }
+
+      await prisma.cartProduct.delete({
+        where: {
+          id: cartProduct.id, // Usuwamy na podstawie `id`
+        },
+      });
+
+      return res.status(200).json({ success: true, message: "Product removed" });
     } catch (error) {
       console.error("Error removing product from cart:", error);
       return res.status(500).json({ error: "Could not remove product" });
