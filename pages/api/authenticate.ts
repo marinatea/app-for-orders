@@ -11,6 +11,7 @@ export default async function handler(
     console.error("Nieobsługiwana metoda:", req.method);
     return res.status(405).json({ message: "Metoda nieobsługiwana." });
   }
+  console.log('DATABASE_URL:', process.env.DATABASE_URL);  // Dodaj logowanie zmiennej środowiskowej
 
   const { codeToLogin } = req.body;
 
