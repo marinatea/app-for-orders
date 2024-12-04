@@ -9,8 +9,9 @@ import { Product } from "../utils/types";
 
 const UserPage = () => {
   const { user } = useUser();
-  const [cart, setCart] = useState<Product[]>([]);
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
+  const [quantities, setQuantities] = useState<
+    { productId: string; quantity: number }[]
+  >([]);
   const [products, setProducts] = useState<Product[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -38,40 +39,57 @@ const UserPage = () => {
     fetchProducts();
   }, []);
 
+  const updateQuantity = (productId: string, quantity: number) => {
+    setQuantities((prevQuantities) => {
+      const updatedQuantities = [...prevQuantities];
+      const index = updatedQuantities.findIndex(
+        (item) => item.productId === productId
+      );
+
+      if (index !== -1) {
+        updatedQuantities[index].quantity = quantity;
+      } else {
+        updatedQuantities.push({ productId, quantity });
+      }
+
+      return updatedQuantities;
+    });
+  };
+
   const handleAddToCart = async () => {
     if (!user || !user.userId) {
       alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
       return;
     }
-  
-    const cartItems = Object.keys(quantities)
-    .filter((productId) => quantities[productId] > 0)
-    .map((productId) => ({
-      id: productId,
-      quantity: quantities[productId],
-    }));
 
-  if (cartItems.length > 0) {
-    const response = await fetch("/api/cart", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user: { id: user.userId },
-        cart: cartItems,
-      }),
-    });
+    const cartItems = quantities
+      .filter((item) => item.quantity > 0)
+      .map((item) => ({
+        id: item.productId,
+        quantity: item.quantity,
+      }));
 
-    if (response.ok) {
-      alert("Produkty zostały dodane do koszyka!");
-      setQuantities({});
+    if (cartItems.length > 0) {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: { id: user.userId },
+          cart: cartItems,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Produkty zostały dodane do koszyka!");
+        setQuantities([]);
+      } else {
+        alert("Błąd podczas dodawania produktów do koszyka.");
+      }
     } else {
-      alert("Błąd podczas dodawania produktów do koszyka.");
+      alert("Musisz wybrać co najmniej jeden produkt.");
     }
-  } else {
-    alert("Musisz wybrać co najmniej jeden produkt.");
-  }
-};
-  
+  };
+
   const getFilteredAndSortedProducts = () => {
     let filteredProducts = products;
 
@@ -171,12 +189,12 @@ const UserPage = () => {
             <input
               type="number"
               min="1"
-              value={quantities[product.productId] || ""}
+              value={
+                quantities.find((item) => item.productId === product.productId)
+                  ?.quantity || ""
+              }
               onChange={(e) =>
-                setQuantities({
-                  ...quantities,
-                  [product.productId]: Number(e.target.value),
-                })
+                updateQuantity(product.productId, Number(e.target.value))
               }
               className={styles.products__item__input}
             />
