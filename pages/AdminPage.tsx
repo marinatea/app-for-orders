@@ -3,8 +3,8 @@ import styles from "../styles/adminPage.module.scss";
 import { UserProvider, useUser } from "../context/UserContext";
 import Image from "next/image";
 import Send from "../img/send.png";
-import CheckboxDone from "../img/checkbox-full.png"; // Zaznaczony checkbox
-import Checkbox from "../img/checkbox.png"; // Domyślny checkbox
+import CheckboxDone from "../img/checkbox-full.png";
+import Checkbox from "../img/checkbox.png";
 
 import WineBottle from "./Bottle";
 import { Cart, Product } from "../utils/types";
@@ -67,7 +67,6 @@ const AdminPage = () => {
         product.ordered = !product.ordered;
         setCarts(updatedCarts);
 
-        // Wysyłanie zmian na serwer (opcjonalne)
         await fetch(`/api/cart/${cartIndex}/product/${productId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

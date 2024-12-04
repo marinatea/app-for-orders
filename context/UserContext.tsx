@@ -3,11 +3,9 @@ import { User, UserContextType, UserProviderProps } from "../utils/types";
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Provider kontekstu
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Funkcja do wylogowania użytkownika
   const logout = () => {
     setUser(null);
   };
@@ -19,7 +17,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   );
 };
 
-// Hook do korzystania z kontekstu
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {
