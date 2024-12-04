@@ -79,8 +79,8 @@ export default async function handler(
   // Obsługuje zapytanie POST do tworzenia nowego koszyka
   if (req.method === "POST") {
     try {
-      const { user, cart } = req.body; // user i cart przychodzą z frontend
-      if (!user || !cart) {
+      const { userId, cart, isFinalized } = req.body; // userId, cart i isFinalized przychodzą z frontend
+      if (!userId || !cart) {
         return res
           .status(400)
           .json({ error: "Brak danych do zapisania koszyka" });
@@ -89,7 +89,8 @@ export default async function handler(
       // Dodajemy koszyk użytkownika do bazy danych
       const savedCart = await prisma.cart.create({
         data: {
-          userId: user.id, // Zakładając, że masz relację z użytkownikiem
+          userId: userId, // Zakładając, że masz relację z użytkownikiem
+          finalized: isFinalized, // Zatwierdzenie zamówienia
           products: {
             create: cart.map((product: Product) => ({
               productId: product.productId,
@@ -105,5 +106,6 @@ export default async function handler(
       return res.status(500).json({ error: "Błąd serwera" });
     }
   }
+  
   return res.status(405).json({ message: "Metoda nieobsługiwana" });
 }
