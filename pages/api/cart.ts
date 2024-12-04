@@ -12,8 +12,25 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       const carts = await prisma.cart.findMany({
-        include: { products: { include: { product: true } } },
+        include: {
+          user: {
+            select: {
+              userName: true,
+            },
+          },
+          products: {
+            include: {
+              product: true,
+            },
+          },
+        },
       });
+      const response = carts.map((cart: { user: { userName: string; }; }) => ({
+        ...cart,
+        userName: cart.user.userName,
+      }));
+      
+      res.json(response);
       return res.status(200).json(carts);
     } catch (error) {
       console.error("Error fetching carts:", error);
@@ -32,10 +49,12 @@ export default async function handler(
         data: {
           userId,
           products: {
-            create: cart.map((item: { productId: string; quantity: number }) => ({
-              productId: item.productId,
-              quantity: item.quantity,
-            })),
+            create: cart.map(
+              (item: { productId: string; quantity: number }) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+              })
+            ),
           },
         },
       });
@@ -85,7 +104,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ success: true, message: "Product removed" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Product removed" });
     } catch (error) {
       console.error("Error removing product from cart:", error);
       return res.status(500).json({ error: "Could not remove product" });

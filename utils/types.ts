@@ -7,19 +7,21 @@ export interface Product {
   description: string;
   orderLink: string;
   store: string;
-  quantity: number;
 }
 
-export interface CartItem {
+export interface CartProduct {
+  id: number;
   cartId: string;
-  name: string;
+  productId: string;
   quantity: number;
   ordered: boolean;
+  product: Product;
 }
 
 export interface Cart {
+  cartId: string;
   userName: string;
-  cart: CartItem[];
+  products: CartProduct[];
 }
 
 export interface User {

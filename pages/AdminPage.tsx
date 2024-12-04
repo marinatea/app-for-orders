@@ -1,13 +1,13 @@
-import { JSX, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/adminPage.module.scss";
-import { UserProvider, useUser } from "../context/UserContext";
+import { useUser } from "../context/UserContext";
 import Image from "next/image";
 import Send from "../img/send.png";
 import CheckboxDone from "../img/checkbox-full.png";
 import Checkbox from "../img/checkbox.png";
 
 import WineBottle from "./Bottle";
-import { Cart, Product } from "../utils/types";
+import { Cart, Product, CartProduct } from "../utils/types";
 
 const AdminPage = () => {
   const { user } = useUser();
@@ -16,12 +16,15 @@ const AdminPage = () => {
 
   useEffect(() => {
     const fetchCarts = async () => {
-      const response = await fetch("/api/cart");
-      if (response.ok) {
-        const data = await response.json();
+      try {
+        const response = await fetch("/api/cart");
+        if (!response.ok) {
+          throw new Error("Błąd podczas pobierania danych zamówień");
+        }
+        const data: Cart[] = await response.json();
         setCarts(data);
-      } else {
-        console.error("Błąd podczas pobierania danych zamówień");
+      } catch (error) {
+        console.error("Błąd podczas pobierania koszyków:", error);
       }
     };
 
@@ -31,7 +34,7 @@ const AdminPage = () => {
         if (!response.ok) {
           throw new Error("Błąd w odpowiedzi API");
         }
-        const data = await response.json();
+        const data: Product[] = await response.json();
         setProducts(data || []);
       } catch (error) {
         console.error("Błąd podczas pobierania produktów:", error);
@@ -43,34 +46,28 @@ const AdminPage = () => {
   }, []);
 
   const getOrderLink = (productId: string) => {
-    if (products.length === 0) {
-      console.warn("Brak danych produktów.");
-      return "#";
-    }
-
     const product = products.find((p) => p.productId === productId);
     if (!product) {
       console.warn(`Nie znaleziono produktu dla ID: ${productId}`);
       return "#";
     }
-
     return product.orderLink;
   };
 
-  const toggleProductOrdered = async (cartIndex: number, productId: string) => {
+  const toggleProductOrdered = async (cartIndex: number, cartProductId: number) => {
     try {
       const updatedCarts = [...carts];
-      const product = updatedCarts[cartIndex].cart.find(
-        (item) => item.cartId === productId
+      const cartProduct = updatedCarts[cartIndex].products.find(
+        (item) => item.id === cartProductId
       );
-      if (product) {
-        product.ordered = !product.ordered;
+      if (cartProduct) {
+        cartProduct.ordered = !cartProduct.ordered;
         setCarts(updatedCarts);
 
-        await fetch(`/api/cart/${cartIndex}/product/${productId}`, {
+        await fetch(`/api/cart/${cartIndex}/product/${cartProductId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ordered: product.ordered }),
+          body: JSON.stringify({ ordered: cartProduct.ordered }),
         });
       }
     } catch (error) {
@@ -84,54 +81,46 @@ const AdminPage = () => {
 
   return (
     <div className={styles.admin}>
-      <h1 className={styles.admin__header}>Panel Admina</h1>
-      <h3>Użytkownik, który zrobił to zamówienie: ${user?.userName}</h3>
-      {carts.length === 0 ? (
-        <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
-      ) : (
-        carts.map((cart, index) => (
-          <div key={index} className={styles.admin__cart}>
-            <h3>Użytkownik: {cart.userName}</h3>
-            <ul>
-              {cart.cart.map((item) => (
-                <li key={item.cartId} className={styles.admin__cart__item}>
-                  {item.name} - {item.quantity} szt.
-                  <div className={styles.admin__cart__optionsWrapper}>
-                    <div
-                      className={styles.admin__checkbox}
-                      onClick={() => toggleProductOrdered(index, item.cartId)}
-                    >
-                      <Image
-                        src={item.ordered ? CheckboxDone : Checkbox}
-                        alt={item.ordered ? "Zaznaczone" : "Niezaznaczone"}
-                      />
-                    </div>
-                    <button className={styles.admin__delete}>
-                      <a
-                        href={getOrderLink(item.cartId)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Image src={Send} alt="send" />
-                      </a>
-                    </button>
+    <h1 className={styles.admin__header}>Panel Admina</h1>
+    {carts.length === 0 ? (
+      <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
+    ) : (
+      carts.map((cart, index) => (
+        <div key={cart.cartId} className={styles.admin__cart}>
+          <h3>Użytkownik: {cart.userName}</h3>
+          <ul>
+            {cart.products.map((cartProduct: CartProduct) => (
+              <li key={cartProduct.id} className={styles.admin__cart__item}>
+                {cartProduct.product.name} - {cartProduct.quantity} szt.
+                <div className={styles.admin__cart__optionsWrapper}>
+                  <div
+                    className={styles.admin__checkbox}
+                    onClick={() => toggleProductOrdered(index, cartProduct.id)}
+                  >
+                    <Image
+                      src={cartProduct.ordered ? CheckboxDone : Checkbox}
+                      alt={cartProduct.ordered ? "Zaznaczone" : "Niezaznaczone"}
+                    />
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      )}
-
-      <WineBottle />
-    </div>
-  );
+                  <button className={styles.admin__delete}>
+                    <a
+                      href={getOrderLink(cartProduct.product.productId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Image src={Send} alt="send" />
+                    </a>
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    )}
+    <WineBottle />
+  </div>
+);
 };
 
-const WrappedAdminPage = (props: JSX.IntrinsicAttributes) => (
-  <UserProvider>
-    <AdminPage {...props} />
-  </UserProvider>
-);
-
-export default WrappedAdminPage;
+export default AdminPage;
