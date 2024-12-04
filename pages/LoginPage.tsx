@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
-import { UserProvider, useUser } from "../context/UserContext";
+import { useUser } from "../context/UserContext";
 import { useRouter } from "next/router";
 import Bottle from "./Bottle";
 
@@ -95,11 +95,4 @@ const LoginPage = () => {
   );
 };
 
-// Wrapping LoginPage z kontekstem użytkownika
-const WrappedLoginPage = () => (
-  <UserProvider>
-    <LoginPage />
-  </UserProvider>
-);
-
-export default WrappedLoginPage;
+export default LoginPage;
