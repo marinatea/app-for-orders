@@ -45,35 +45,32 @@ const UserPage = () => {
     }
   
     const cartItems = Object.keys(quantities)
-      .filter((productId) => quantities[productId] > 0)
-      .map((productId) => {
-        const product = products.find((prod) => prod.productId === productId);
-        return {
-          id: productId,
-          quantity: quantities[productId],
-        };
-      });
-  
-    if (cartItems.length > 0) {
-      const response = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user: { id: user.userId },
-          cart: cartItems,
-        }),
-      });
-  
-      if (response.ok) {
-        alert("Produkty zostały dodane do koszyka!");
-        setQuantities({});
-      } else {
-        alert("Błąd podczas dodawania produktów do koszyka.");
-      }
+    .filter((productId) => quantities[productId] > 0)
+    .map((productId) => ({
+      id: productId,
+      quantity: quantities[productId],
+    }));
+
+  if (cartItems.length > 0) {
+    const response = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user: { id: user.userId },
+        cart: cartItems,
+      }),
+    });
+
+    if (response.ok) {
+      alert("Produkty zostały dodane do koszyka!");
+      setQuantities({});
     } else {
-      alert("Musisz wybrać co najmniej jeden produkt.");
+      alert("Błąd podczas dodawania produktów do koszyka.");
     }
-  };
+  } else {
+    alert("Musisz wybrać co najmniej jeden produkt.");
+  }
+};
   
   const getFilteredAndSortedProducts = () => {
     let filteredProducts = products;
@@ -91,8 +88,9 @@ const UserPage = () => {
     }
 
     filteredProducts.sort((a: Product, b: Product) => {
-      const comparison = a.name.localeCompare(b.name);
-      return sortOrder === "asc" ? comparison : -comparison;
+      return sortOrder === "asc"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
     });
 
     return filteredProducts;
