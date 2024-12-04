@@ -38,53 +38,43 @@ const UserPage = () => {
     fetchProducts();
   }, []);
 
-  const addToCart = async (product: Product, quantity: number) => {
+  const handleAddToCart = async () => {
     if (!user || !user.userId) {
       alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
       return;
     }
-
-    if (quantity > 0) {
+  
+    const cartItems = Object.keys(quantities)
+      .filter((productId) => quantities[productId] > 0)
+      .map((productId) => {
+        const product = products.find((prod) => prod.productId === productId);
+        return {
+          id: productId,
+          quantity: quantities[productId],
+        };
+      });
+  
+    if (cartItems.length > 0) {
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: { id: user.userId },
-          cart: [{ id: product.productId, quantity }],
+          cart: cartItems,
         }),
       });
-
+  
       if (response.ok) {
-        alert("Produkt dodany do koszyka!");
+        alert("Produkty zostały dodane do koszyka!");
+        setQuantities({});
       } else {
-        alert("Błąd podczas dodawania produktu do koszyka");
+        alert("Błąd podczas dodawania produktów do koszyka.");
       }
-    }
-  };
-
-  const handleCheckout = async () => {
-    if (cart.length === 0) {
-      alert(
-        "Twój koszyk jest pusty. Dodaj produkty przed złożeniem zamówienia."
-      );
-      return;
-    }
-
-    const response = await fetch("/api/cart", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user, cart, isFinalized: true }),
-    });
-
-    if (response.ok) {
-      alert("Zamówienie zostało zapisane i ostatecznie zatwierdzone.");
-      setCart([]);
-      setQuantities({});
     } else {
-      alert("Błąd podczas składania zamówienia.");
+      alert("Musisz wybrać co najmniej jeden produkt.");
     }
   };
-
+  
   const getFilteredAndSortedProducts = () => {
     let filteredProducts = products;
 
@@ -184,7 +174,12 @@ const UserPage = () => {
               type="number"
               min="1"
               value={quantities[product.productId] || ""}
-              onChange={(e) => addToCart(product, Number(e.target.value))}
+              onChange={(e) =>
+                setQuantities({
+                  ...quantities,
+                  [product.productId]: Number(e.target.value),
+                })
+              }
               className={styles.products__item__input}
             />
           </li>
@@ -213,7 +208,7 @@ const UserPage = () => {
         </button>
       </div>
 
-      <button onClick={handleCheckout} className={styles.products__button}>
+      <button onClick={handleAddToCart} className={styles.products__button}>
         Złóż zamówienie
       </button>
       <WineBottle />
