@@ -34,5 +34,6 @@ model Product {
   userId      String?
   userName    String?
   ordered     Boolean  @default(false)
+  quantity    Int      @default(0) 
 }
 

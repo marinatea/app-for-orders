@@ -7,8 +7,6 @@ import ArrowRight from "../img/arrow-right.png";
 import WineBottle from "./Bottle";
 import { Product } from "../utils/types";
 
-
-
 const UserPage = () => {
   const { user } = useUser();
   const [cart, setCart] = useState<Product[]>([]);
@@ -36,7 +34,6 @@ const UserPage = () => {
         console.error("Błąd podczas pobierania produktów:", error);
       }
     };
-    
 
     fetchProducts();
   }, []);
@@ -46,17 +43,17 @@ const UserPage = () => {
       alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
       return;
     }
-  
+
     if (quantity > 0) {
       const response = await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: { id: user.userId },
-          cart: [{ id: product.id, quantity }],
+          cart: [{ id: product.productId, quantity }],
         }),
       });
-  
+
       if (response.ok) {
         alert("Produkt dodany do koszyka!");
       } else {
@@ -64,7 +61,6 @@ const UserPage = () => {
       }
     }
   };
-  
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -91,33 +87,33 @@ const UserPage = () => {
 
   const getFilteredAndSortedProducts = () => {
     let filteredProducts = products;
-  
+
     if (selectedCategory) {
       filteredProducts = filteredProducts.filter(
         (product: Product) => product.category === selectedCategory
       );
     }
-  
+
     if (selectedStore) {
       filteredProducts = filteredProducts.filter(
         (product: Product) => product.store === selectedStore
       );
     }
-  
+
     filteredProducts.sort((a: Product, b: Product) => {
       const comparison = a.name.localeCompare(b.name);
       return sortOrder === "asc" ? comparison : -comparison;
     });
-  
+
     return filteredProducts;
   };
 
   const getPaginatedProducts = () => {
-  const filteredAndSortedProducts = getFilteredAndSortedProducts();
-  const startIndex = (currentPage - 1) * productsPerPage;
-  const endIndex = startIndex + productsPerPage;
-  return filteredAndSortedProducts.slice(startIndex, endIndex);
-};
+    const filteredAndSortedProducts = getFilteredAndSortedProducts();
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    return filteredAndSortedProducts.slice(startIndex, endIndex);
+  };
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
@@ -182,12 +178,12 @@ const UserPage = () => {
 
       <ul className={styles.products__list}>
         {getPaginatedProducts().map((product: Product) => (
-          <li key={product.id} className={styles.products__item}>
+          <li key={product.productId} className={styles.products__item}>
             <span className={styles.products__item__name}>{product.name}</span>
             <input
               type="number"
               min="1"
-              value={quantities[product.id] || ""}
+              value={quantities[product.productId] || ""}
               onChange={(e) => addToCart(product, Number(e.target.value))}
               className={styles.products__item__input}
             />

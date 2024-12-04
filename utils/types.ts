@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 export interface Product {
-  id: string;
+  productId: string;
   category: string;
   name: string;
   description: string;
@@ -11,7 +11,7 @@ export interface Product {
 }
 
 export interface CartItem {
-  id: string;
+  cartId: string;
   name: string;
   quantity: number;
   ordered: boolean;

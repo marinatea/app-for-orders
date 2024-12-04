@@ -92,7 +92,7 @@ export default async function handler(
           userId: user.id, // Zakładając, że masz relację z użytkownikiem
           products: {
             create: cart.map((product: Product) => ({
-              productId: product.id,
+              productId: product.productId,
               quantity: product.quantity,
             })),
           },
