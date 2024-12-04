@@ -25,7 +25,7 @@ const LoginPage = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        codeToLogin: codeToLogin, 
+        codeToLogin: codeToLogin,
       }),
     });
 

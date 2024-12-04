@@ -54,7 +54,10 @@ const AdminPage = () => {
     return product.orderLink;
   };
 
-  const toggleProductOrdered = async (cartIndex: number, cartProductId: number) => {
+  const toggleProductOrdered = async (
+    cartIndex: number,
+    cartProductId: number
+  ) => {
     try {
       const updatedCarts = [...carts];
       const cartProduct = updatedCarts[cartIndex].products.find(
@@ -79,53 +82,56 @@ const AdminPage = () => {
     return <div>Ładowanie danych produktów...</div>;
   }
 
-  if (user && user.role !== 'admin') {
+  if (user && user.role !== "admin") {
     return <div>Brak uprawnień do wyświetlania tej strony.</div>; // Sprawdzanie roli użytkownika
   }
 
-
   return (
     <div className={styles.admin}>
-    <h1 className={styles.admin__header}>Panel Admina</h1>
-    {carts.length === 0 ? (
-      <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
-    ) : (
-      carts.map((cart, index) => (
-        <div key={cart.cartId} className={styles.admin__cart}>
-          <h3>Użytkownik: {cart.userName}</h3>
-          <ul>
-            {cart.products.map((cartProduct: CartProduct) => (
-              <li key={cartProduct.id} className={styles.admin__cart__item}>
-                {cartProduct.product.name} - {cartProduct.quantity} szt.
-                <div className={styles.admin__cart__optionsWrapper}>
-                  <div
-                    className={styles.admin__checkbox}
-                    onClick={() => toggleProductOrdered(index, cartProduct.id)}
-                  >
-                    <Image
-                      src={cartProduct.ordered ? CheckboxDone : Checkbox}
-                      alt={cartProduct.ordered ? "Zaznaczone" : "Niezaznaczone"}
-                    />
-                  </div>
-                  <button className={styles.admin__delete}>
-                    <a
-                      href={getOrderLink(cartProduct.product.productId)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+      <h1 className={styles.admin__header}>Panel Admina</h1>
+      {carts.length === 0 ? (
+        <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
+      ) : (
+        carts.map((cart, index) => (
+          <div key={cart.cartId} className={styles.admin__cart}>
+            <h3>Użytkownik: {cart.userName}</h3>
+            <ul>
+              {cart.products.map((cartProduct: CartProduct) => (
+                <li key={cartProduct.id} className={styles.admin__cart__item}>
+                  {cartProduct.product.name} - {cartProduct.quantity} szt.
+                  <div className={styles.admin__cart__optionsWrapper}>
+                    <div
+                      className={styles.admin__checkbox}
+                      onClick={() =>
+                        toggleProductOrdered(index, cartProduct.id)
+                      }
                     >
-                      <Image src={Send} alt="send" />
-                    </a>
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    )}
-    <WineBottle />
-  </div>
-);
+                      <Image
+                        src={cartProduct.ordered ? CheckboxDone : Checkbox}
+                        alt={
+                          cartProduct.ordered ? "Zaznaczone" : "Niezaznaczone"
+                        }
+                      />
+                    </div>
+                    <button className={styles.admin__delete}>
+                      <a
+                        href={getOrderLink(cartProduct.product.productId)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Image src={Send} alt="send" />
+                      </a>
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      )}
+      <WineBottle />
+    </div>
+  );
 };
 
 export default AdminPage;

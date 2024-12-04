@@ -3,7 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "POST") {
     console.error("Nieobsługiwana metoda:", req.method);
     return res.status(405).json({ message: "Metoda nieobsługiwana." });
@@ -15,7 +18,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!codeToLogin || codeToLogin.trim().length === 0) {
     console.error("Brak codeToLogin!");
-    return res.status(400).json({ success: false, message: "Brak codeToLogin!" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Brak codeToLogin!" });
   }
 
   try {
@@ -27,7 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (!user) {
       console.error("Nie znaleziono użytkownika dla codeToLogin:", codeToLogin);
-      return res.status(404).json({ success: false, message: "Nie znaleziono użytkownika!" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Nie znaleziono użytkownika!" });
     }
 
     console.log("Znaleziony użytkownik:", user);

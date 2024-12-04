@@ -126,7 +126,9 @@ export default async function handler(
         },
       });
 
-      return res.status(200).json({ success: true, message: "Product removed" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Product removed" });
     } catch (error) {
       console.error("Error removing product from cart:", error);
       return res.status(500).json({ error: "Could not remove product" });
