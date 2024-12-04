@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { UserProvider, useUser } from "../context/UserContext"; // Importuj kontekst
+import { useUser } from "../context/UserContext";
 import styles from "../styles/userPage.module.scss";
 import Image from "next/image";
 import ArrowLeft from "../img/arrow-left.png";
@@ -9,6 +9,7 @@ import { Product } from "../utils/types";
 
 const UserPage = () => {
   const { user } = useUser();
+
   const [quantities, setQuantities] = useState<
     { productId: string; quantity: number }[]
   >([]);
@@ -25,14 +26,10 @@ const UserPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await fetch("/api/products");
-        if (!response.ok) {
-          console.error("Błąd odpowiedzi z API:", response.statusText);
-          throw new Error("Błąd odpowiedzi z API");
-        }
         const data = await response.json();
         setProducts(data);
       } catch (error) {
-        console.error("Błąd podczas pobierania produktów:", error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -57,36 +54,32 @@ const UserPage = () => {
   };
 
   const handleAddToCart = async () => {
-    if (!user || !user.userId) {
-      alert("Musisz być zalogowany, aby dodać produkt do koszyka.");
+    if (!user?.userId) {
+      alert("You must be logged in to add products to the cart.");
       return;
     }
 
-    const cartItems = quantities
-      .filter((item) => item.quantity > 0)
-      .map((item) => ({
-        id: item.productId,
-        quantity: item.quantity,
-      }));
+    const cartItems = quantities.filter((item) => item.quantity > 0);
 
     if (cartItems.length > 0) {
-      const response = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user: { id: user.userId },
-          cart: cartItems,
-        }),
-      });
+      try {
+        const response = await fetch("/api/cart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.userId, cart: cartItems }),
+        });
 
-      if (response.ok) {
-        alert("Produkty zostały dodane do koszyka!");
-        setQuantities([]);
-      } else {
-        alert("Błąd podczas dodawania produktów do koszyka.");
+        if (response.ok) {
+          alert("Products added to cart!");
+          setQuantities([]);
+        } else {
+          alert("Error adding products to cart.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
       }
     } else {
-      alert("Musisz wybrać co najmniej jeden produkt.");
+      alert("Select at least one product.");
     }
   };
 
@@ -148,6 +141,7 @@ const UserPage = () => {
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
+      {/* <h3>`Użytkownik: ${user?.userName}`</h3> */}
       <section className={styles.products__sortWrapper}>
         <select
           value={selectedCategory}
@@ -232,10 +226,4 @@ const UserPage = () => {
   );
 };
 
-const WrappedUserPage = () => (
-  <UserProvider>
-    <UserPage />
-  </UserProvider>
-);
-
-export default WrappedUserPage;
+export default UserPage;
