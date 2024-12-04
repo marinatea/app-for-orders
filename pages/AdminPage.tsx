@@ -48,7 +48,7 @@ const AdminPage = () => {
       return "#";
     }
 
-    const product = products.find((p) => p.id === productId);
+    const product = products.find((p) => p.productId === productId);
     if (!product) {
       console.warn(`Nie znaleziono produktu dla ID: ${productId}`);
       return "#";
@@ -61,7 +61,7 @@ const AdminPage = () => {
     try {
       const updatedCarts = [...carts];
       const product = updatedCarts[cartIndex].cart.find(
-        (item) => item.id === productId
+        (item) => item.cartId === productId
       );
       if (product) {
         product.ordered = !product.ordered;
@@ -95,12 +95,12 @@ const AdminPage = () => {
             <h3>Użytkownik: {cart.userName}</h3>
             <ul>
               {cart.cart.map((item) => (
-                <li key={item.id} className={styles.admin__cart__item}>
+                <li key={item.cartId} className={styles.admin__cart__item}>
                   {item.name} - {item.quantity} szt.
                   <div className={styles.admin__cart__optionsWrapper}>
                     <div
                       className={styles.admin__checkbox}
-                      onClick={() => toggleProductOrdered(index, item.id)}
+                      onClick={() => toggleProductOrdered(index, item.cartId)}
                     >
                       <Image
                         src={item.ordered ? CheckboxDone : Checkbox}
@@ -109,7 +109,7 @@ const AdminPage = () => {
                     </div>
                     <button className={styles.admin__delete}>
                       <a
-                        href={getOrderLink(item.id)}
+                        href={getOrderLink(item.cartId)}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
