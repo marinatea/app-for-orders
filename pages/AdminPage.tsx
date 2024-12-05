@@ -111,7 +111,7 @@ const AdminPage = () => {
       ) : (
         carts.map((cart, index) => (
           <div key={cart.cartId} className={styles.admin__cart}>
-            <h3>Użytkownik: {cart.userName}</h3>
+            <h3 className={styles.admin__name}>Użytkownik: {cart.userName}</h3>
             <ul>
               {cart.products.map((cartProduct: CartProduct) => (
                 <li key={cartProduct.id} className={styles.admin__cart__item}>

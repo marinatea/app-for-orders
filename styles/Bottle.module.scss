@@ -3,41 +3,46 @@
 .wineBottle {
   position: fixed;
   bottom: -5vh;
+  top: 50vh;
   right: 5vw;
-  width: 14rem;
+  width: 17rem;
   height: 70vh;
   background-color: rgba(0, 86, 77, 0.28);
   border-radius: 35% 35% 10% 10%;
   z-index: -1;
+  transform-origin: top center;
 
   @include tablet {
-    width: 11.5rem;
+    width: 16rem;
+    top: 60vh;
   }
   @include desktop {
-    width: 16rem;
+    width: 20rem;
+    top: 60vh;
   }
   @include large-desktop {
-    width: 20rem;
+    width: 22rem;
+    top: 50vh;
   }
 }
 
 .neck {
   position: absolute;
-  top: -45%;
+  top: -15rem;;
   left: 50%;
-  width: 4rem;
-  height: 45%;
+  width: 5rem;
+  height: 15rem;
   background-color: rgba(0, 86, 77, 0.28);
   border-radius: 20px 20px 0px 0px;
   transform: translateX(-50%);
 
   @include tablet {
-    width: 3.5rem;
+    width: 4rem;
   }
   @include desktop {
-    width: 5.4rem;
+    width: 6rem;
   }
   @include large-desktop {
-    width: 6rem;
+    width: 7rem;
   }
 }
