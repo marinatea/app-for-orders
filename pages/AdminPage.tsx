@@ -83,7 +83,7 @@ const AdminPage = () => {
   }
 
   if (user && user.role !== "admin") {
-    return <div>Brak uprawnień do wyświetlania tej strony.</div>; // Sprawdzanie roli użytkownika
+    return <div>Brak uprawnień do wyświetlania tej strony.</div>;
   }
 
   return (

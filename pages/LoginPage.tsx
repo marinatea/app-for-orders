@@ -14,7 +14,6 @@ const LoginPage = () => {
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
 
-  // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
