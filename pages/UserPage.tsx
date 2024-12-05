@@ -27,7 +27,7 @@ const UserPage = () => {
       try {
         const response = await fetch("/api/products");
         const data = await response.json();
-        console.log("Fetched Products:", data); // Log API response
+        console.log("Fetched Products:", data);
         setProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -56,7 +56,7 @@ const UserPage = () => {
 
   const handleAddToCart = async () => {
     if (!user?.userId) {
-      alert("You must be logged in to add products to the cart.");
+      alert("Musisz być zalogowany(-na), żeby dodać produkt do koszyka.");
       return;
     }
 
@@ -71,16 +71,16 @@ const UserPage = () => {
         });
 
         if (response.ok) {
-          alert("Products added to cart!");
+          alert("Produkty dodane do koszyka!");
           setQuantities([]);
         } else {
-          alert("Error adding products to cart.");
+          alert("Błąd podczas dodawania produktów do koszyka.");
         }
       } catch (error) {
         console.error("Error:", error);
       }
     } else {
-      alert("Select at least one product.");
+      alert("Wybierz co najmniej jeden produkt.");
     }
   };
 

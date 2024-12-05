@@ -12,8 +12,8 @@ export default async function handler(
       const products = await prisma.product.findMany();
       return res.status(200).json(products);
     } catch (error) {
-      console.error("Error fetching products:", error);
-      return res.status(500).json({ error: "Could not fetch products" });
+      console.error("Błąd podczas pobierania produktów:", error);
+      return res.status(500).json({ error: "Nie można pobrać produktów" });
     }
   }
 
@@ -27,10 +27,10 @@ export default async function handler(
 
       return res.status(201).json(product);
     } catch (error) {
-      console.error("Error adding product:", error);
-      return res.status(500).json({ error: "Could not add product" });
+      console.error("Błąd podczas dodawania produktu:", error);
+      return res.status(500).json({ error: "Nie można dodać produktu" });
     }
   }
 
-  return res.status(405).json({ message: "Method not allowed" });
+  return res.status(405).json({ message: "Metoda niedozwolona" });
 }

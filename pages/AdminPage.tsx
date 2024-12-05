@@ -78,6 +78,23 @@ const AdminPage = () => {
     }
   };
 
+  const deleteCart = async (cartId: string) => {
+    try {
+      const response = await fetch(`/api/cart?cartId=${cartId}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Błąd podczas usuwania karty");
+      }
+  
+      setCarts(carts.filter((cart) => cart.cartId !== cartId));
+    } catch (error) {
+      console.error("Błąd podczas usuwania karty:", error);
+    }
+  };
+  
+
   if (products.length === 0) {
     return <div>Ładowanie danych produktów...</div>;
   }
@@ -126,6 +143,12 @@ const AdminPage = () => {
                 </li>
               ))}
             </ul>
+            <button
+              className={styles.admin__deleteCart}
+              onClick={() => deleteCart(cart.cartId)}
+            >
+              Usuń kartę
+            </button>
           </div>
         ))
       )}
