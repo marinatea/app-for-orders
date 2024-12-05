@@ -142,9 +142,9 @@ const UserPage = () => {
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
-      <h2 className={styles.products__header__username}>
+      {user && (<h2 className={styles.products__header__username}>
         Użytkownik: {user?.userName}
-      </h2>
+      </h2>)}
       <section className={styles.products__sortWrapper}>
         <select
           value={selectedCategory}
@@ -221,9 +221,11 @@ const UserPage = () => {
         </button>
       </div>
 
-      <button onClick={handleAddToCart} className={styles.products__button}>
-        Złóż zamówienie
-      </button>
+      {user && (
+        <button onClick={handleAddToCart} className={styles.products__button}>
+          Złóż zamówienie
+        </button>
+      )}
       <WineBottle />
     </div>
   );
