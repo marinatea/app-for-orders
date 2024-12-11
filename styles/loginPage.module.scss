@@ -1,9 +1,6 @@
 @use "./mixins/mixins.scss" as *;
+@import "./mixins/colors.scss";
 
-$winetu-teal: #00564d;
-$winetu-white: #ffffff;
-$winetu-light-gray: #f5f5f5;
-$winetu-dark-gray: #333333;
 
 .login {
   display: flex;

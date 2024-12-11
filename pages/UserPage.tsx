@@ -142,44 +142,46 @@ const UserPage = () => {
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
-      {user && (<h2 className={styles.products__header__username}>
-        Użytkownik: {user?.userName}
-      </h2>)}
-      <section className={styles.products__sortWrapper}>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className={styles.products__filter}
-        >
-          <option value="">Wszystkie kategorie</option>
-          {uniqueCategories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-        <select
-          value={selectedStore}
-          onChange={(e) => setSelectedStore(e.target.value)}
-          className={styles.products__filter}
-        >
-          <option value="">Wszystkie sklepy</option>
-          {uniqueStores.map((store) => (
-            <option key={store} value={store}>
-              {store}
-            </option>
-          ))}
-        </select>
-
-        <button
-          onClick={toggleSortOrder}
-          className={styles.products__sortButton}
-        >
-          Sortuj od {sortOrder === "asc" ? "A do Z" : "Z do A"}
-        </button>
-      </section>
+      {user && (
+        <h2 className={styles.products__header__username}>
+          Użytkownik: {user?.userName}
+        </h2>
+      )}
 
       <ul className={styles.products__list}>
+        <section className={styles.products__sortWrapper}>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className={styles.products__filter}
+          >
+            <option value="">Wszystkie kategorie</option>
+            {uniqueCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedStore}
+            onChange={(e) => setSelectedStore(e.target.value)}
+            className={styles.products__filter}
+          >
+            <option value="">Wszystkie sklepy</option>
+            {uniqueStores.map((store) => (
+              <option key={store} value={store}>
+                {store}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={toggleSortOrder}
+            className={styles.products__sortButton}
+          >
+            Sortuj od {sortOrder === "asc" ? "A do Z" : "Z do A"}
+          </button>
+        </section>
         {getPaginatedProducts().map((product: Product) => (
           <li key={product.productId} className={styles.products__item}>
             <span className={styles.products__item__name}>{product.name}</span>
