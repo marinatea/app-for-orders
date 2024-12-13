@@ -13,6 +13,8 @@ const AdminPage = () => {
   const { user } = useUser();
   const [carts, setCarts] = useState<Cart[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingCarts, setIsLoadingCarts] = useState(true);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
 
   useEffect(() => {
     const fetchCarts = async () => {
@@ -25,6 +27,8 @@ const AdminPage = () => {
         setCarts(data);
       } catch (error) {
         console.error("Błąd podczas pobierania koszyków:", error);
+      } finally {
+        setIsLoadingCarts(false);
       }
     };
 
@@ -38,6 +42,8 @@ const AdminPage = () => {
         setProducts(data || []);
       } catch (error) {
         console.error("Błąd podczas pobierania produktów:", error);
+      } finally {
+        setIsLoadingProducts(false);
       }
     };
 
@@ -83,19 +89,18 @@ const AdminPage = () => {
       const response = await fetch(`/api/cart?cartId=${cartId}`, {
         method: "DELETE",
       });
-  
+
       if (!response.ok) {
         throw new Error("Błąd podczas usuwania karty");
       }
-  
+
       setCarts(carts.filter((cart) => cart.cartId !== cartId));
     } catch (error) {
       console.error("Błąd podczas usuwania karty:", error);
     }
   };
-  
 
-  if (products.length === 0) {
+  if (isLoadingProducts && isLoadingCarts) {
     return <div>Ładowanie danych produktów...</div>;
   }
 
