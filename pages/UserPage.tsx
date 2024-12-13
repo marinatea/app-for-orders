@@ -142,9 +142,11 @@ const UserPage = () => {
   return (
     <div className={styles.products}>
       <h1 className={styles.products__header}>Produkty</h1>
-      {user && (<h2 className={styles.products__header__username}>
-        Użytkownik: {user?.userName}
-      </h2>)}
+      {user && (
+        <h2 className={styles.products__header__username}>
+          Użytkownik: {user?.userName}
+        </h2>
+      )}
       <section className={styles.products__sortWrapper}>
         <select
           value={selectedCategory}
@@ -182,7 +184,16 @@ const UserPage = () => {
       <ul className={styles.products__list}>
         {getPaginatedProducts().map((product: Product) => (
           <li key={product.productId} className={styles.products__item}>
-            <span className={styles.products__item__name}>{product.name}</span>
+            <div className={styles.products__item__wrapper}>
+              {" "}
+              <span className={styles.products__item__name}>
+                {product.name}
+              </span>
+              <span className={styles.products__item__description}>
+                {product.description}
+              </span>
+            </div>
+
             <input
               type="number"
               min="1"
