@@ -1,48 +1,100 @@
+@import "./mixins/colors.scss";
 @import "./mixins/mixins.scss";
 
 .wineBottle {
   position: fixed;
-  bottom: -5vh;
-  top: 50vh;
+  bottom: 0;
   right: 5vw;
-  width: 17rem;
-  height: 70vh;
-  background-color: rgba(0, 86, 77, 0.28);
-  border-radius: 35% 35% 10% 10%;
+  width: 18rem;
   z-index: -1;
   transform-origin: top center;
+  height: 27rem;
+  margin: 0 auto;
 
   @include tablet {
-    width: 16rem;
-    top: 60vh;
+    width: 20rem;
+    height: 60rem;
   }
   @include desktop {
     width: 20rem;
-    top: 60vh;
+    height: 70rem;
   }
   @include large-desktop {
     width: 22rem;
-    top: 50vh;
+    height: 80rem;
   }
-}
 
-.neck {
-  position: absolute;
-  top: -15rem;;
-  left: 50%;
-  width: 5rem;
-  height: 15rem;
-  background-color: rgba(0, 86, 77, 0.28);
-  border-radius: 20px 20px 0px 0px;
-  transform: translateX(-50%);
+  // Szyja butelki
+  .neck {
+    position: absolute;
+    top: -2rem;
+    left: 50%;
+    width: 5rem;
+    height: 12rem;
+    background-color: $winetu-teal-lite;
+    border-radius: 20px 20px 0 0;
+    transform: translateX(-50%);
 
-  @include tablet {
-    width: 4rem;
+    @include tablet {
+      width: 4.7rem;
+      height: 11rem;
+      top: -1rem;
+    }
+    @include desktop {
+      width: 5rem;
+      height: 14rem;
+    }
+    @include large-desktop {
+      width: 5.2rem;
+      height: 16rem;
+    }
   }
-  @include desktop {
-    width: 6rem;
+
+  // Krążek
+  .ring {
+    position: absolute;
+    top: 9rem;
+    left: 50%;
+    width: 17rem;
+    height: 17rem;
+    background-color: $winetu-teal-lite;
+    border-radius: 50% 50%;
+    transform: translateX(-50%);
+
+    @include tablet {
+      width: 17rem;
+      height: 17rem;
+      top: 9rem;
+
+    }
+    @include desktop {
+      width: 17rem;
+      height: 17rem;
+    }
+    @include large-desktop {
+      width: 17rem;
+      height: 17rem;
+    }
   }
-  @include large-desktop {
-    width: 7rem;
+
+  // Korpus butelki
+  .body {
+    position: absolute;
+    top: 18rem;
+    left: 50%;
+    width: 17rem;
+    height: 100%;
+    background-color: $winetu-teal-lite;
+    transform: translateX(-50%);
+
+    @include tablet {
+      height: 45rem;
+    }
+    @include desktop {
+      height: 60rem;
+    }
+    @include large-desktop {
+      height: 70rem;
+    }
   }
 }
