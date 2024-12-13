@@ -35,7 +35,7 @@ export default async function handler(
       res.json(response);
       return res.status(200).json(carts);
     } catch (error) {
-      console.error("Error fetching carts:", error);
+      console.error("Błąd podczas pobierania koszyków:", error);
       return res.status(500).json({ error: "Server error" });
     }
   }
@@ -44,7 +44,7 @@ export default async function handler(
     try {
       const { userId, cart } = req.body;
       if (!userId || !cart) {
-        return res.status(400).json({ error: "Missing required data" });
+        return res.status(400).json({ error: "Brak wymaganych danych" });
       }
 
       const savedCart = await prisma.cart.create({
@@ -63,7 +63,7 @@ export default async function handler(
 
       return res.status(200).json(savedCart);
     } catch (error) {
-      console.error("Error adding cart:", error);
+      console.error("Błąd podczas dodawania koszyka:", error);
       return res.status(500).json({ error: "Server error" });
     }
   }
@@ -71,69 +71,56 @@ export default async function handler(
   if (req.method === "PATCH") {
     try {
       if (!cartId || !productId) {
-        return res.status(400).json({ error: "Missing required parameters" });
+        return res.status(400).json({ error: "Brak wymaganych parametrów" });
       }
 
-      // Krok 1: Znajdź CartProduct na podstawie cartId i productId
       const cartProduct = await prisma.cartProduct.findFirst({
         where: {
-          cartId: cartId as string, // Używamy oddzielnych pól
-          productId: productId as string, // Używamy oddzielnych pól
+          cartId: cartId as string,
+          productId: productId as string,
         },
       });
 
-      // Sprawdzenie, czy produkt w koszyku istnieje
       if (!cartProduct) {
-        return res.status(404).json({ error: "Cart product not found" });
+        return res.status(404).json({ error: "Nie znaleziono produktu w koszyku" });
       }
 
-      // Krok 2: Zaktualizuj rekord na podstawie znalezionego ID
       const updatedCartProduct = await prisma.cartProduct.update({
         where: {
-          id: cartProduct.id, // Aktualizujemy za pomocą ID rekordu
+          id: cartProduct.id,
         },
-        data: { quantity: req.body.quantity }, // Aktualizacja ilości
+        data: { quantity: req.body.quantity },
       });
 
       return res.status(200).json(updatedCartProduct);
     } catch (error) {
-      console.error("Error updating cart:", error);
-      return res.status(500).json({ error: "Could not update cart" });
+      console.error("Błąd podczas aktualizacji koszyka:", error);
+      return res.status(500).json({ error: "Nie można zaktualizować koszyka" });
     }
   }
 
-  if (req.method === "DELETE") {
+  if (req.method === "DELETE" && cartId && !productId) {
     try {
-      if (!cartId || !productId) {
-        return res.status(400).json({ error: "Missing required parameters" });
-      }
-
-      // Używamy `findFirst` i następnie `delete`
-      const cartProduct = await prisma.cartProduct.findFirst({
+      await prisma.cartProduct.deleteMany({
         where: {
-          cartId: cartId as string, // Oddzielnie `cartId` i `productId`
-          productId: productId as string, // Oddzielnie `cartId` i `productId`
+          cartId: cartId as string,
         },
       });
-
-      if (!cartProduct) {
-        return res.status(404).json({ error: "Cart product not found" });
-      }
-
-      await prisma.cartProduct.delete({
+  
+      const deletedCart = await prisma.cart.delete({
         where: {
-          id: cartProduct.id, // Usuwamy na podstawie `id`
+          cartId: cartId as string,
         },
       });
-
-      return res
-        .status(200)
-        .json({ success: true, message: "Product removed" });
+  
+      return res.status(200).json({
+        success: true,
+        message: "Koszyk został pomyślnie usunięty",
+        deletedCart,
+      });
     } catch (error) {
-      console.error("Error removing product from cart:", error);
-      return res.status(500).json({ error: "Could not remove product" });
+      console.error("Błąd podczas usuwania koszyka:", error);
+      return res.status(500).json({ error: "Nie można usunąć koszyka" });
     }
   }
-
-  return res.status(405).json({ message: "Method not allowed" });
 }

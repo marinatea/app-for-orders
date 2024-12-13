@@ -1,10 +1,11 @@
+// LoginPage komponent
+
 import { useState, useEffect } from "react";
 import styles from "../styles/loginPage.module.scss";
 import { useUser } from "../context/UserContext";
 import { useRouter } from "next/router";
 import Bottle from "./Bottle";
 
-// LoginPage komponent
 const LoginPage = () => {
   const { setUser, user } = useUser();
   const [codeToLogin, setCodeToLogin] = useState("");
@@ -14,7 +15,6 @@ const LoginPage = () => {
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
 
-  // Funkcja do obsługi logowania
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

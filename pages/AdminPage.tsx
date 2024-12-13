@@ -78,12 +78,29 @@ const AdminPage = () => {
     }
   };
 
+  const deleteCart = async (cartId: string) => {
+    try {
+      const response = await fetch(`/api/cart?cartId=${cartId}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        throw new Error("Błąd podczas usuwania karty");
+      }
+  
+      setCarts(carts.filter((cart) => cart.cartId !== cartId));
+    } catch (error) {
+      console.error("Błąd podczas usuwania karty:", error);
+    }
+  };
+  
+
   if (products.length === 0) {
     return <div>Ładowanie danych produktów...</div>;
   }
 
   if (user && user.role !== "admin") {
-    return <div>Brak uprawnień do wyświetlania tej strony.</div>; // Sprawdzanie roli użytkownika
+    return <div>Brak uprawnień do wyświetlania tej strony.</div>;
   }
 
   return (
@@ -94,7 +111,7 @@ const AdminPage = () => {
       ) : (
         carts.map((cart, index) => (
           <div key={cart.cartId} className={styles.admin__cart}>
-            <h3>Użytkownik: {cart.userName}</h3>
+            <h3 className={styles.admin__name}>Użytkownik: {cart.userName}</h3>
             <ul>
               {cart.products.map((cartProduct: CartProduct) => (
                 <li key={cartProduct.id} className={styles.admin__cart__item}>
@@ -126,6 +143,12 @@ const AdminPage = () => {
                 </li>
               ))}
             </ul>
+            <button
+              className={styles.admin__deleteCart}
+              onClick={() => deleteCart(cart.cartId)}
+            >
+              Usuń kartę
+            </button>
           </div>
         ))
       )}
