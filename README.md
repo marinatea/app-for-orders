@@ -6,7 +6,9 @@ DEMO-front VERCEL: https://app-for-orders.vercel.app/
 
 
 to start project: npm run dev
+
 npx prisma studio
+
 npx prisma migrate dev
 
 Examples
