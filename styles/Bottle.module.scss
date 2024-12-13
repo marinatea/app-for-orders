@@ -8,23 +8,24 @@
   width: 18rem;
   z-index: -1;
   transform-origin: top center;
-  height: 27rem;
+  height: 80vh;
   margin: 0 auto;
 
   @include tablet {
     width: 20rem;
-    height: 60rem;
+    height: 35rem;
+    height: 80vh;
   }
   @include desktop {
     width: 20rem;
-    height: 70rem;
+    height: 35rem;
+    height: 80vh;
   }
   @include large-desktop {
     width: 22rem;
-    height: 80rem;
+    height: 80vh;
   }
 
-  // Szyja butelki
   .neck {
     position: absolute;
     top: -2rem;
@@ -50,7 +51,6 @@
     }
   }
 
-  // Krążek
   .ring {
     position: absolute;
     top: 9rem;
@@ -65,7 +65,6 @@
       width: 17rem;
       height: 17rem;
       top: 9rem;
-
     }
     @include desktop {
       width: 17rem;
@@ -77,7 +76,6 @@
     }
   }
 
-  // Korpus butelki
   .body {
     position: absolute;
     top: 18rem;
