@@ -100,7 +100,7 @@ const AdminPage = () => {
     }
   };
 
-  if (isLoadingProducts && isLoadingCarts) {
+  if (isLoadingProducts) {
     return <div>Ładowanie danych produktów...</div>;
   }
 
@@ -111,7 +111,9 @@ const AdminPage = () => {
   return (
     <div className={styles.admin}>
       <h1 className={styles.admin__header}>Panel Admina</h1>
-      {carts.length === 0 ? (
+      {isLoadingCarts ? (
+          <p>Ładowanie koszyków...</p>
+      ): carts.length === 0 ? (
         <p className={styles.admin__noOrders}>Brak zamówień do wyświetlenia.</p>
       ) : (
         carts.map((cart, index) => (
