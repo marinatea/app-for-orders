@@ -7,6 +7,8 @@ export interface Product {
   description: string;
   orderLink: string;
   store: string;
+  price: number;
+  email: string;
 }
 
 export interface CartProduct {
